@@ -31,3 +31,14 @@ RUN ALGORITHM:
 
       iter++;
     }
+
+
+HOW TO USE RightHeavyHV:
+
+	RightHeavyHV hv = new RightHeavyHV(G, W, H);
+        List<Vector> xy = hv.system_config();		// you can specify root node
+
+HOW TO USE Radial:
+
+	Radial r = new Radial(G, 100, 100);
+        List<Vector> xy = r.system_config();		// you can specify root node
