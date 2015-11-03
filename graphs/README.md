@@ -52,6 +52,6 @@ DRAWING EXAMPLE:
         List<Vector> xy = hv.system_config()
         for (int from = 0; from < G.V; from++) 
         {
-        	foreach(var to : G.adj_list(from))
+        	foreach(var to in G.adj_list(from))
         		draw_line(xy[from], xy[to]); // or draw_line(xy[from][0], xy[from][1], xy[to][0], xy[to][1]);
-	}
+		}
