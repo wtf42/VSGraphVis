@@ -59,7 +59,7 @@ namespace VSGraphViz
             if (G == null)
                 return;
 
-            ListBoxItem lbi = ((sender as ListBox).SelectedItem as ListBoxItem);
+            ComboBoxItem lbi = ((sender as ComboBox).SelectedItem as ComboBoxItem);
             String curName = lbi.Name;
             switch (curName)
             {
@@ -73,6 +73,7 @@ namespace VSGraphViz
                     cur_alg = 3;
                     break;
             }
+
             show_graph(G);
         }
 
