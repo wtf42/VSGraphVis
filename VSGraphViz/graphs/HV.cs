@@ -75,7 +75,16 @@ namespace HV
                 right[i] = 0;
 
             X[root] = new Vector(sx == INF ? 0 : sx, sy == INF ? 0 : sy);
-            setPos(root, p_root, ref X, ref GA);
+
+
+            if (G.V > 1)
+            {
+                setPos(root, p_root, ref X, ref GA);
+            }
+            else
+            {
+                right[root] = (int)X[root][0];
+            }
 
             return X;
         }

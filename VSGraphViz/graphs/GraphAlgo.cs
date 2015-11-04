@@ -11,6 +11,59 @@ namespace GraphAlgo
 {
     using Graph;
 
+    public class AcyclicTest<T>
+    {
+        public AcyclicTest(Graph<T> G)
+        {
+            this.G = G;
+        }
+
+        public bool isAcyclic()
+        {
+            p = new int[G.V];
+            cl = new int[G.V];
+            for (int i = 0; i < G.V; i++)
+            {
+                p[i] = -1;
+                cl[i] = 0;
+            }
+
+            cycle_st = -1;
+            for (int i = 0; i < G.V; i++)
+                if (dfs(i))
+                    break;
+
+            return (cycle_st == -1);
+        }
+
+        private bool dfs(int v, int parent = -1)
+        {
+            cl[v] = 1;
+            foreach(var to in G.adj_list(v))
+            {
+                if (to == parent) continue;
+                if (cl[to] == 0)
+                {
+                    p[to] = v;
+                    if (dfs(to, v)) return true;
+                }
+                else if (cl[to] == 1)
+                {
+                    cycle_end = v;
+                    cycle_st = to;
+                    return true;
+                }
+            }
+            cl[v] = 2;
+            return false;
+        }
+
+        Graph<T> G;
+        int[] cl;
+        int[] p;
+        int cycle_st, cycle_end;
+    }
+
     public class TreeAlgo<T>
     {
         public TreeAlgo(Graph<T> G)

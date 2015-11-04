@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 namespace VSGraphViz
 {
     using Graph;
+    using GraphAlgo;
     using FruchtermanReingold;
     using Radial;
     using HV;
@@ -227,6 +228,9 @@ namespace VSGraphViz
         // Fruchterman Reingold Algorithm
         private void ComputeXY(Graph<Object> G, int cur_alg)
         {
+            AcyclicTest<Object> AT = new AcyclicTest<Object>(G);
+            bool acyclic = AT.isAcyclic();
+
             switch (cur_alg)
             {
                 case 1:
@@ -253,14 +257,32 @@ namespace VSGraphViz
                     }
                     break;
                 case 2:
-                    Radial r2 = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                    List<Vector> xy2 = r2.system_config();
-                    this.xy.Add(xy2);
+                    if (!acyclic)
+                    {
+                        cur_alg = 1;
+                        ComputeXY(G, 1);
+                        return;
+                    }
+                    else
+                    {
+                        Radial r2 = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+                        List<Vector> xy2 = r2.system_config();
+                        this.xy.Add(xy2);
+                    }
                     break;
                 case 3:
-                    RightHeavyHV r3 = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                    List<Vector> xy3 = r3.system_config();
-                    this.xy.Add(xy3);
+                    if (!acyclic)
+                    {
+                        cur_alg = 1;
+                        ComputeXY(G, 1);
+                        return;
+                    }
+                    else
+                    {
+                        RightHeavyHV r3 = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+                        List<Vector> xy3 = r3.system_config();
+                        this.xy.Add(xy3);
+                    }
                     break;
             }
 
@@ -462,7 +484,7 @@ namespace VSGraphViz
                 {
                     if (edge.Count == 0) break;
 
-                    for (int j = 0, to; edge.Count > 0 && j < edge[v].Count; j++)
+                    for (int j = 0, to; edge.Count > 0 && xy.Count > 0 && j < edge[v].Count; j++)
                     {
                         to = edge[v][j].Key;
                         if (v > to) continue;
@@ -475,7 +497,7 @@ namespace VSGraphViz
                 }
 
 
-                for (int i = 0; i < G.V; i++)
+                for (int i = 0; xy.Count > 0 && i < G.V; i++)
                 {
                     Canvas.SetLeft(vert[i], 0);
                     Canvas.SetTop(vert[i], 0);
