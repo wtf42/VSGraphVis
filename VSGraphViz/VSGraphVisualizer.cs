@@ -59,6 +59,8 @@ namespace VSGraphViz
                 {
                     if (usedVertices.Contains(e.Value))
                         continue;
+                    if (!(isValidVertex(e)))
+                        continue;
                     int to = graph.add(new ExpressionVertex(e));
                     graph.add(v, to);
                     BuildGraphRec(e, to, rec_level + 1);
@@ -71,12 +73,24 @@ namespace VSGraphViz
                             continue;
                         if (usedVertices.Contains(field.Value))
                             continue;
+                        if (!(isValidVertex(field)))
+                            continue;
                         int to = graph.add(new ExpressionVertex(field));
                         graph.add(v, to);
                         BuildGraphRec(field, to, rec_level + 1);
                     }
                 }
             }
+        }
+
+        bool isValidVertex(Expression exp)
+        {
+            foreach (Expression e in exp.DataMembers)
+            {
+                if (!e.IsValidValue)
+                    return false;
+            }
+            return true;
         }
 
         void MakeVertexCaptions()
