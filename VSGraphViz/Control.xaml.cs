@@ -18,6 +18,8 @@ namespace VSGraphViz
 {
     using Graph;
     using FruchtermanReingold;
+    using Radial;
+    using HV;
     using SplayTree;
     using Vector;
     using System.Windows.Media.Animation;
@@ -87,7 +89,7 @@ namespace VSGraphViz
             vert[v].Children.Add(tb);
 
             ve.Height = 25;
-            ve.Width = 120;
+            ve.Width = 70;
             vert_x = (int)ve.Width / 2;
             vert_y = (int)ve.Height / 2;
 
@@ -210,6 +212,10 @@ namespace VSGraphViz
 
                 iter++;
             }
+
+            /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+            List<Vector> xy = r.system_config();
+            this.xy.Add(xy);*/
         }
 
         // Vertices and Edges Animation

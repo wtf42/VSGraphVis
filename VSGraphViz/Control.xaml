@@ -12,6 +12,6 @@
     </UserControl.Resources>
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <Canvas x:Name="front_canvas" Width="600" Height="450" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Canvas x:Name="front_canvas" Width="580" Height="420" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>

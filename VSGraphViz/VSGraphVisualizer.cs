@@ -98,7 +98,7 @@ namespace VSGraphViz
             for (int i = 0; i < graph.V; i++)
             {
                 ExpressionVertex v = graph.vertices[i].data as ExpressionVertex;
-                v.name = "(" + v.exp.Type + ") " + v.exp.Name + " = " + v.exp.Value;
+                v.name = /*"(" + v.exp.Type + ") " + v.exp.Name + " = " + */v.exp.Value;
             }
 
             /*foreach (var v in graph.vertices)
