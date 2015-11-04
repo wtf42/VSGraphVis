@@ -35,7 +35,7 @@ namespace VSGraphViz
             // = 13;
 
             //MainWindow.Background = (Brush)bc.ConvertFrom("#FFF1F1F1");
-
+            cur_alg = 1;
             show = false;
             animation_complete = false;
         }
@@ -52,6 +52,27 @@ namespace VSGraphViz
             return Height;
         }
 
+        private void changeAlg(object sender, SelectionChangedEventArgs args)
+        {
+            if (G == null)
+                return;
+
+            ListBoxItem lbi = ((sender as ListBox).SelectedItem as ListBoxItem);
+            String curName = lbi.Name;
+            switch (curName)
+            {
+                case "a":
+                    cur_alg = 1;
+                    break;
+                case "b":
+                    cur_alg = 2;
+                    break;
+                case "c":
+                    cur_alg = 3;
+                    break;
+            }
+            show_graph(G);
+        }
 
         private void AddEdge(int v, int u)
         {
@@ -182,8 +203,9 @@ namespace VSGraphViz
         }
 
         // Fruchterman Reingold Algorithm
-        private void ComputeXY(Graph<Object> G)
+        private void ComputeXY(Graph<Object> G, int cur_alg)
         {
+
 
 
             List<int> dv = new List<int>();
@@ -192,34 +214,43 @@ namespace VSGraphViz
 
             int dummy = G.V;
 
-
-            FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
+            switch (cur_alg)
+            {
+                case 1:
+                    FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
                                      square_distance_repulsive_force.f,
                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
 
 
-            bool equilibria = false;
-            List<Vector> xy = new List<Vector>();
-            int iter = 0;
-            while (!equilibria)
-            {
-                xy = fr_layout.system_config(out equilibria);
+                    bool equilibria = false;
+                    List<Vector> xy = new List<Vector>();
+                    int iter = 0;
+                    while (!equilibria)
+                    {
+                        xy = fr_layout.system_config(out equilibria);
 
-                if (iter % 100 == 0)
-                {
-                    this.xy.Add(xy);
-                }
 
-                iter++;
+                        iter++;
+            
+                        if (iter % 100 == 0)
+                        {
+                            this.xy.Add(xy);
+                        }
+
+                        iter++;
+                    }
+                    break;
+                case 2:
+                    RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+                    List<Vector> xy2 = r.system_config();
+                    this.xy.Add(xy2);
+                    break;
+                case 3:
+                    Radial r2 = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+                    List<Vector> xy3 = r2.system_config();
+                    this.xy.Add(xy3);
+                    break;
             }
-
-            /*Radial r = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-            List<Vector> xy = r.system_config();
-            this.xy.Add(xy);*/
-
-            /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-            List<Vector> xy = r.system_config();
-            this.xy.Add(xy);*/
         }
 
         // Vertices and Edges Animation
@@ -363,7 +394,7 @@ namespace VSGraphViz
 
                 xy = new List<List<Vector>>();
 
-                ComputeXY(G);
+                ComputeXY(G, cur_alg);
                 InitVis(G, front_canvas);
 
                 current = new int[G.V];
@@ -409,7 +440,7 @@ namespace VSGraphViz
         private List<List<Vector>> xy;
         private int[] current;
         private List<String> vert_info;
-
+        private int cur_alg;
         bool animation_complete;
 
         double X, Y;
