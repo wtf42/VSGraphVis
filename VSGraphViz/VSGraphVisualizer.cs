@@ -24,6 +24,12 @@ namespace VSGraphViz
 
             if (VSGraphVizPackage.ToolWindowCtl.hold)
                 return;
+
+            if (!VSGraphVizPackage.ToolWindowCtl.animation_complete)
+                return;
+
+            VSGraphVizPackage.ToolWindowCtl.animation_complete = false;
+
             BuildGraph(exp);
             MakeVertexCaptions();
             MakeVertexTooltips();

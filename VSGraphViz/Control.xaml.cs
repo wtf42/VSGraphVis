@@ -41,7 +41,7 @@ namespace VSGraphViz
             //MainWindow.Background = (Brush)bc.ConvertFrom("#FFF1F1F1");
 
             show = false;
-            animation_complete = false;
+            animation_complete = true;
 
             cur_alg = 1;
         }
@@ -573,7 +573,7 @@ namespace VSGraphViz
 
         private int cur_alg;
 
-        bool animation_complete;
+        public bool animation_complete;
         public bool hold;
         double X, Y;
         double X_shape, Y_shape;
