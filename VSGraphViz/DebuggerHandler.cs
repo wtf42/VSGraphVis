@@ -28,6 +28,8 @@ namespace VSGraphViz
             {
                 return;
             }
+            if (VSGraphVizPackage.viz == null)
+                return;
 
             var exp = FindUnderMousePointer(m_debugger, e);
             if (exp == null)
