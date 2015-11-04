@@ -13,5 +13,13 @@ namespace VSGraphViz
         {
             tb1.Text = text;
         }
+        public double getW()
+        {
+            return Width;
+        }
+        public double getH()
+        {
+            return Height;
+        }
     }
 }

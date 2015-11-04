@@ -27,12 +27,10 @@ namespace VSGraphViz
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(ToolWindow), MultiInstances=true)]
     [Guid(GuidList.guidCommandTargetRGBPkgString)]
-    public sealed class CommandTargetRGBPackage : Package
+    public sealed class VSGraphVizPackage : Package
     {
-        public static Control ctl;
-        public CommandTargetRGBPackage()
+        public VSGraphVizPackage()
         {
-            ctl = new Control();
         }
         
         private void ShowToolWindow(object sender, EventArgs e)
@@ -64,9 +62,15 @@ namespace VSGraphViz
             }
         }
 
+        public static Control ToolWindowCtl;
+        public static VSGraphVisualizer viz;
+
         protected override void Initialize()
         {
             base.Initialize();
+
+            ToolWindowCtl = new Control();
+            viz = new VSGraphVisualizer();
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;

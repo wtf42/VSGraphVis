@@ -16,8 +16,7 @@ namespace VSGraphViz
         public ToolWindow() :  
             base(null)
         {
-            base.Content = CommandTargetRGBPackage.ctl;
-            //base.Content = new Control();
+            base.Content = VSGraphVizPackage.ToolWindowCtl;
         }
     }
 }

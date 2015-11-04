@@ -19,7 +19,7 @@
       <Button guid="guidCommandTargetRGBCmdSet" id="cmdidShowToolWindow" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
         <Strings>
-          <ButtonText>RGB ToolWindow</ButtonText>
+          <ButtonText>VS Graph Visualizer</ButtonText>
         </Strings>
       </Button>
     </Buttons>
