@@ -6,7 +6,7 @@
              xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
              xmlns:local="clr-namespace:VSGraphViz"
              mc:Ignorable="d" 
-             d:DesignHeight="520" d:DesignWidth="700"
+             Height="520" Width="700"
              Name="ToolWindow">
     <UserControl.Resources>
     </UserControl.Resources>
