@@ -60,6 +60,7 @@ namespace VSGraphViz
                     if (usedVertices.Contains(e.Value))
                         continue;
                     int to = graph.add(new ExpressionVertex(e));
+                    graph.add(v, to);
                     BuildGraphRec(e, to, rec_level + 1);
                 }
                 else
@@ -71,6 +72,7 @@ namespace VSGraphViz
                         if (usedVertices.Contains(field.Value))
                             continue;
                         int to = graph.add(new ExpressionVertex(field));
+                        graph.add(v, to);
                         BuildGraphRec(field, to, rec_level + 1);
                     }
                 }
