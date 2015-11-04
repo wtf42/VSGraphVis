@@ -105,6 +105,8 @@ namespace VSGraphViz
             vert[v].Children.Add(ve);
 
             TextBlock tb = new TextBlock();
+            tb.MaxWidth = 85;
+            tb.MaxHeight = 42;
             tb.Text = G.vertices[v].data.ToString();
             tb.VerticalAlignment = VerticalAlignment.Center;
             tb.HorizontalAlignment = HorizontalAlignment.Center;
