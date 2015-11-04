@@ -170,7 +170,7 @@ namespace VSGraphViz
                 for (int i = 0; i < vert.Count; i++)
                     if (vert[i] == tmp) cur_vertex = i;
 
-                for (int i = 0; i < edge[cur_vertex].Count; i++)
+                for (int i = 0; edge.Count > 0 && i < edge[cur_vertex].Count; i++)
                 {
                     AnimateEdge(edge[cur_vertex][i].Value,
                                 (int)new_X,
@@ -254,7 +254,7 @@ namespace VSGraphViz
             };
 
             // incident edges animation
-            for (int i = 0; i < edge[v_id].Count; i++)
+            for (int i = 0; edge.Count > 0 && i < edge[v_id].Count; i++)
             {
 
                 AnimateEdge(edge[v_id][i].Value, (int)x_anim.To + vert_x,
@@ -366,7 +366,9 @@ namespace VSGraphViz
 
                 for (int v = 0; v < G.V; v++)
                 {
-                    for (int j = 0, to; j < edge[v].Count; j++)
+                    if (edge.Count == 0) break;
+
+                    for (int j = 0, to; edge.Count > 0 && j < edge[v].Count; j++)
                     {
                         to = edge[v][j].Key;
                         if (v > to) continue;
