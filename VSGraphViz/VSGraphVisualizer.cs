@@ -110,7 +110,7 @@ namespace VSGraphViz
         public void UpdateGraphLayout()
         {
             //
-            VSGraphVizPackage.ToolWindowCtl.show_graph(graph);
+            VSGraphVizPackage.ToolWindowCtl.show_graph(graph, 0);
         }
     }
     public class ExpressionVertex

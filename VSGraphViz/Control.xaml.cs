@@ -73,7 +73,7 @@ namespace VSGraphViz
                     cur_alg = 3;
                     break;
             }
-            show_graph(G);
+            show_graph(G, 0);
         }
 
         private void AddEdge(int v, int u)
@@ -129,7 +129,7 @@ namespace VSGraphViz
             front_canvas.Children.Add(vert[v]);
         }
 
-        private void InitVis(Graph<Object> G, Canvas front_canvas)
+        private void InitVis(Graph<Object> G, Canvas front_canvas, int root = -1)
         {
             front_canvas.Children.Clear();
             edge = new List<List<KeyValuePair<int, Line>>>();
@@ -144,8 +144,26 @@ namespace VSGraphViz
             {
                 AddVertex(i);
                 Rectangle e = vert[i].Children[0] as Rectangle;
-                e.Fill = (Brush)bc.ConvertFrom("#FFFFFF"); // #EF5555
+                if (i == root)
+                {
+                    e.Fill = (Brush)bc.ConvertFrom("#007ACC"); //
+                    TextBlock t = vert[i].Children[1] as TextBlock;
+                    t.Foreground = (Brush)bc.ConvertFrom("#FFFFFF");
+                }
+                else
+                    e.Fill = (Brush)bc.ConvertFrom("#FFFFFF"); // #EF5555
             }
+
+            if (new_vertices != null)
+            {
+                foreach (var i in new_vertices)
+                {
+                    Rectangle e = vert[i].Children[0] as Rectangle;
+                    if (i != root)
+                        e.Fill = (Brush)bc.ConvertFrom("#EEEEF2");
+                }
+            }
+            
 
             front_canvas.MouseMove += VertexMouseMove;
         }
@@ -364,6 +382,8 @@ namespace VSGraphViz
 
         private Graph<Object> InitGraph(Graph<Object> graph = null)
         {
+            new_vertices = null;
+
             Random rnd = new Random();
             vert_info = new List<string>();
       
@@ -386,6 +406,10 @@ namespace VSGraphViz
                 tmp_config.Add(new Vector(x+5, y+5));
             }
 
+            List<bool> used = new List<bool>(graph.V);
+            for (int i = 0; i < graph.V; i++)
+                used.Add(false);
+
             for (int i = 0; i < G.V; i++)
             {
                 for (int j = 0; j < graph.V; j++)
@@ -395,12 +419,21 @@ namespace VSGraphViz
                         sim++;
                         tmp_config[j][0] = initial_config[i][0];
                         tmp_config[j][1] = initial_config[i][1];
+
+                        used[j] = true;
                     }
                 }
             }
 
             if (sim > 0)
             {
+                new_vertices = new List<int>();
+                for (int i = 0; i < graph.V; i++)
+                    if (!used[i]) new_vertices.Add(i);
+
+                if (new_vertices.Count == 0) new_vertices = null;
+                    
+
                 initial_config = tmp_config;
             }
             else
@@ -411,7 +444,7 @@ namespace VSGraphViz
             return graph;
         }
 
-        public void show_graph(Graph<Object> graph)
+        public void show_graph(Graph<Object> graph, int root = -1)
         {
             if (!show)
             {
@@ -419,7 +452,7 @@ namespace VSGraphViz
 
                 xy = new List<List<Vector>>();
                 ComputeXY(G, cur_alg);
-                InitVis(G, front_canvas);
+                InitVis(G, front_canvas, root);
 
                 current = new int[G.V];
 
@@ -466,6 +499,7 @@ namespace VSGraphViz
         private List<String> vert_info;
 
         private List<Vector> initial_config;
+        private List<int> new_vertices;
 
         private int cur_alg;
 
