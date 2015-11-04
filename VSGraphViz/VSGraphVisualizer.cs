@@ -11,7 +11,7 @@ namespace VSGraphViz
     public class VSGraphVisualizer
     {
         Expression root_expression;
-        Graph<ExpressionVertex> graph;
+        Graph<Object> graph;
 
         public VSGraphVisualizer()
         {
@@ -41,7 +41,7 @@ namespace VSGraphViz
         void BuildGraph(Expression root_exp)
         {
             root_expression = root_exp;
-            graph = new Graph<ExpressionVertex>();
+            graph = new Graph<Object>();
             usedVertices = new SortedSet<string>();
             int root = graph.add(new ExpressionVertex(root_exp));
             BuildGraphRec(root_exp, root, 0);
@@ -79,15 +79,22 @@ namespace VSGraphViz
 
         void MakeVertexCaptions()
         {
-            foreach(var v in graph.vertices)
+            for (int i = 0; i < graph.V; i++)
+            {
+                ExpressionVertex v = graph.vertices[i].data as ExpressionVertex;
+                v.name = "(" + v.exp.Type + ") " + v.exp.Name + " = " + v.exp.Value;
+            }
+
+            /*foreach (var v in graph.vertices)
             {
                 v.data.name = "(" + v.data.exp.Type + ") " + v.data.exp.Name + " = " + v.data.exp.Value;
-            }
+            }*/
         }
 
         public void UpdateGraphLayout()
         {
             //
+            VSGraphVizPackage.ToolWindowCtl.show_graph(graph);
         }
     }
     public class ExpressionVertex
