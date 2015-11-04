@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="VSGraphViz.Control"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
+             xmlns:local="clr-namespace:VSGraphViz"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="ToolWindow">
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
+        <TextBox Name="tb1" Text="42" Margin="0,10,0,106" />
+        <Button Name="btn1" Height="72" Content="Click Me" Margin="0,199,0,29" />
+    </Grid>
+</UserControl>

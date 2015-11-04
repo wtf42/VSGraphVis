@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace VSGraphVisualizer
+namespace VSGraphViz
 {
     [Export(typeof(IWpfTextViewCreationListener))]
     [ContentType("code")]

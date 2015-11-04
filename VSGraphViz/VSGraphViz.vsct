@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+  <Commands package="guidCommandTargetRGBPkg">
+    <Menus>
+      <Menu guid="guidCommandTargetRGBCmdSet" id="RGBToolbar" priority="0x0000" type="ToolWindowToolbar">
+        <Strings>
+          <ButtonText>Red Green Blue</ButtonText>
+        </Strings>
+      </Menu>
+    </Menus>
+    <Groups>
+      <Group guid="guidCommandTargetRGBCmdSet" id="RGBToolbarGroup" priority="0x0500">
+        <Parent guid="guidCommandTargetRGBCmdSet" id="RGBToolbar" />
+      </Group>
+    </Groups>
+    <Buttons>
+      <Button guid="guidCommandTargetRGBCmdSet" id="cmdidShowToolWindow" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
+        <Strings>
+          <ButtonText>RGB ToolWindow</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+  <Symbols>
+    <GuidSymbol name="guidCommandTargetRGBPkg" value="{a7dcebeb-e498-4d25-a554-e59003a2b7ee}" />
+    <GuidSymbol name="guidCommandTargetRGBCmdSet" value="{00dcae55-4379-40a6-b152-3a38de753f29}">
+      <IDSymbol name="cmdidShowToolWindow" value="0x0101" />
+      <IDSymbol name="RGBToolbar" value="0x2000" />
+      <IDSymbol name="RGBToolbarGroup" value="0x2001" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>

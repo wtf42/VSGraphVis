@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace VSGraphVisualizer
+namespace VSGraphViz
 {
     public sealed class VSGraphVisualizer
     {
@@ -35,6 +35,7 @@ namespace VSGraphVisualizer
             StreamWriter ss = new StreamWriter(@"C:\tmp\_tmp\a.txt");
             ss.WriteLine(log_write(exp.DataMembers));
             ss.Close();
+            CommandTargetRGBPackage.ctl.setText(log_write(exp.DataMembers));
         }
         string log_write(Expressions e)
         {
