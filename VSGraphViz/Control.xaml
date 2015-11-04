@@ -12,11 +12,11 @@
     </UserControl.Resources>
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <ListBox Name="lb" Width="100" Height="50"  SelectionChanged="changeAlg" SelectionMode="Single" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="13,46,363,433">
-            <ListBoxItem Name="a">Alg 1</ListBoxItem>
-            <ListBoxItem Name="b">Alg 2</ListBoxItem>
-            <ListBoxItem Name="c">Alg 3</ListBoxItem>
-        </ListBox>
+        <ComboBox Name="cb" Height="25" Width="90" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <ComboBoxItem Name="a">Alg 1</ComboBoxItem>
+            <ComboBoxItem Name="b">Alg 2</ComboBoxItem>
+            <ComboBoxItem Name="c">Alg 3</ComboBoxItem>
+        </ComboBox>
         <Canvas x:Name="front_canvas" Width="580" Height="420" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>

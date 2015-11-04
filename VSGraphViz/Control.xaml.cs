@@ -59,7 +59,7 @@ namespace VSGraphViz
             if (G == null)
                 return;
 
-            ListBoxItem lbi = ((sender as ListBox).SelectedItem as ListBoxItem);
+            ComboBoxItem lbi = ((sender as ComboBox).SelectedItem as ComboBoxItem);
             String curName = lbi.Name;
             switch (curName)
             {
@@ -111,8 +111,8 @@ namespace VSGraphViz
 
             vert[v].Children.Add(tb);
 
-            ve.Height = 25;
-            ve.Width = 70;
+            ve.Height = 45;
+            ve.Width = 90;
             vert_x = (int)ve.Width / 2;
             vert_y = (int)ve.Height / 2;
 

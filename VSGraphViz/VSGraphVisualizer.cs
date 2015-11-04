@@ -21,22 +21,10 @@ namespace VSGraphViz
 
         public void UpdateGraph(EnvDTE.Expression exp)
         {
-            //VSGraphVizPackage.ToolWindowCtl.setText(log_write(exp.DataMembers));
             BuildGraph(exp);
             MakeVertexCaptions();
             UpdateGraphLayout();
-            //TODO: update toolbox?
         }
-        /*
-        string log_write(Expressions e)
-        {
-            string ret = "";
-            foreach (EnvDTE.Expression m in e)
-            {
-                ret += "(" + m.Type + ")" + m.Name + " = " + m.Value + "\n";
-            }
-            return ret;
-        }*/
 
         void BuildGraph(Expression root_exp)
         {
@@ -48,7 +36,7 @@ namespace VSGraphViz
             int root = graph.add(new ExpressionVertex(root_exp));
             BuildGraphRec(root_exp, root, 0);
         }
-        
+
         SortedDictionary<string, int> usedVertices;
         void BuildGraphRec(Expression exp, int v, int rec_level)
         {
@@ -63,7 +51,7 @@ namespace VSGraphViz
                 }
                 else
                 {
-                    foreach(Expression field in m.DataMembers)
+                    foreach (Expression field in m.DataMembers)
                     {
                         if (field.Type == root_expression.Type)
                             addVertexRec(v, field, rec_level);
@@ -95,21 +83,51 @@ namespace VSGraphViz
 
         void MakeVertexCaptions()
         {
-            for (int i = 0; i < graph.V; i++)
+            bool found = false;
+            foreach (Expression field in root_expression.DataMembers)
             {
-                ExpressionVertex v = graph.vertices[i].data as ExpressionVertex;
-                v.name = /*"(" + v.exp.Type + ") " + v.exp.Name + " = " + */v.exp.Value;
+                if (field.Type == root_expression.Type)
+                    continue;
+                if (field.DataMembers.OfType<Expression>().
+                        Where(e => e.Type == root_expression.Type).Any())
+                    continue;
+                if (graph.vertices.OfType<Vertex<object>>().
+                    Select(v => v.data as ExpressionVertex).
+                    Select(expv => expv.exp.DataMembers.OfType<Expression>()).
+                    Select(m => m.FirstOrDefault(f => f.Name == field.Name)).
+                    Select(f => f.Value).
+                    Distinct().Count() == graph.vertices.Count)
+                {
+                    found = true;
+                    foreach (var gr_vert in graph.vertices)
+                    {
+                        ExpressionVertex vert = gr_vert.data as ExpressionVertex;
+                        Expression exp = vert.exp;
+                        vert.name = exp.Value + "\n{ ERROR }";
+                        foreach (Expression f in exp.DataMembers)
+                        {
+                            if (f.Name == field.Name)
+                            {
+                                vert.name = exp.Value + "\n" + "{ " + f.Name + " = " + f.Value + " }";
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
             }
-
-            /*foreach (var v in graph.vertices)
+            if (!found)
             {
-                v.data.name = "(" + v.data.exp.Type + ") " + v.data.exp.Name + " = " + v.data.exp.Value;
-            }*/
+                foreach (var gr_vert in graph.vertices)
+                {
+                    ExpressionVertex vert = gr_vert.data as ExpressionVertex;
+                    vert.name = vert.exp.Value;
+                }
+            }
         }
 
         public void UpdateGraphLayout()
         {
-            //
             VSGraphVizPackage.ToolWindowCtl.show_graph(graph, 0);
         }
     }

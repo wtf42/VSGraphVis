@@ -28,9 +28,11 @@ namespace VSGraphViz
             {
                 return;
             }
-            
+
             var exp = FindUnderMousePointer(m_debugger, e);
             if (exp == null)
+                return;
+            if (!exp.IsValidValue)
                 return;
             VSGraphVizPackage.viz.UpdateGraph(exp);
         }
