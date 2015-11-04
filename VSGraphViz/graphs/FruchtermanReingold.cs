@@ -51,12 +51,12 @@ namespace FruchtermanReingold
     public class FR
     {
         public FR(Graph<Object> _G, Force fattractive, Force frepulsive,
-                    int _W, int _H)
+                    int _W, int _H, List<Vector> initial_config = null)
         {
             W = _W; H = _H;
             G = new Graph<Config>(_G.V);
 
-            init_config();
+            init_config(initial_config);
 
             foreach (var e in _G)
                 G.add(e.u.v, e.v.v);
@@ -72,21 +72,33 @@ namespace FruchtermanReingold
                 no_rep_force[i] = new ST<int>();
         }
 
-        protected void init_config()
+        protected void init_config(List<Vector> initial_config = null)
         {
             /*Random rnd = new Random();
             foreach (var v in G.vertices)
                 v.data = new Config(rnd.Next(W), rnd.Next(H));*/
 
-            Traversal<Config> tr = new Traversal<Config>(G);
-            double R = Math.Min(H/2, W/2);
-            foreach (var v in G.vertices)
+            if (initial_config != null)
             {
-                double angle = Math.PI * (4 * tr.traversal_order(v.v) + G.V) / (2 * G.V);
-                double x = R * Math.Cos(angle) + W / 2,
-                       y = R * Math.Sin(angle) + H / 2;
+                for (int i = 0; i < G.V; i++)
+                {
+                    double x = Math.Min(W - 1, Math.Max(1, initial_config[i][0]));
+                    double y = Math.Min(H - 1, Math.Max(1,initial_config[i][1]));
+                    G.vertices[i].data = new Config(x, y);
+                }
+            }
+            else
+            {
+                Traversal<Config> tr = new Traversal<Config>(G);
+                double R = Math.Min(H / 2, W / 2);
+                foreach (var v in G.vertices)
+                {
+                    double angle = Math.PI * (4 * tr.traversal_order(v.v) + G.V) / (2 * G.V);
+                    double x = R * Math.Cos(angle) + W / 2,
+                           y = R * Math.Sin(angle) + H / 2;
 
-                v.data = new Config(x == W ? x-1 : x, y == H ? y-1 : y);
+                    v.data = new Config(x == W ? x - 1 : x, y == H ? y - 1 : y);
+                }
             }
         }
 
@@ -299,8 +311,8 @@ namespace FruchtermanReingold
     public class FR_grid : FR
     {
         public FR_grid(Graph<Object> _G, Force fattractive, Force frepulsive,
-                    int _W, int _H)
-            : base(_G, fattractive, frepulsive, _W, _H)
+                    int _W, int _H, List<Vector> initial_config = null)
+            : base(_G, fattractive, frepulsive, _W, _H, initial_config)
         {
             grid = new Grid<ST<int>>((int)Math.Ceiling(H / (k * 2.0)),
                                 (int)Math.Ceiling(W / (k * 2.0)), H, W);

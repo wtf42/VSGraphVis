@@ -100,7 +100,7 @@ namespace VSGraphViz
             ve.Stroke = (Brush)bc.ConvertFrom("#FF636363");
             ve.StrokeThickness = 2;
             ve.Fill = (Brush)bc.ConvertFrom("#FFB7B7B7");
-            
+
             ve.Cursor = Cursors.Hand;
             vert[v].Children.Add(ve);
 
@@ -139,7 +139,7 @@ namespace VSGraphViz
             foreach (var e in G)
                 AddEdge(e.v.v, e.u.v);
 
-            
+
             for (int i = 0; i < G.V; i++)
             {
                 AddVertex(i);
@@ -207,26 +207,25 @@ namespace VSGraphViz
         // Fruchterman Reingold Algorithm
         private void ComputeXY(Graph<Object> G, int cur_alg)
         {
-
-
-            List<int> dv = new List<int>();
-
-
-
             switch (cur_alg)
             {
                 case 1:
                     FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
                                       square_distance_repulsive_force.f,
-                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight, 
+                                      initial_config);
 
                     bool equilibria = false;
                     List<Vector> xy = new List<Vector>();
                     int iter = 0;
+
+                    if (initial_config != null)
+                        this.xy.Add(initial_config);
+
                     while (!equilibria)
                     {
                         xy = fr_layout.system_config(out equilibria);
-                        if (iter % 100 == 0)
+                        if (iter % 100 == 0 || equilibria)
                         {
                             this.xy.Add(xy);
                         }
@@ -245,34 +244,42 @@ namespace VSGraphViz
                     break;
             }
 
-                        /*FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
-                                                 square_distance_repulsive_force.f,
-                                                 (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+            if (xy.Count > 0)
+            {
+                initial_config = new List<Vector>();
+                foreach (Vector v in xy[xy.Count - 1])
+                    initial_config.Add(new Vector(v[0], v[1]));
+            }
+           
+
+            /*FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
+                                     square_distance_repulsive_force.f,
+                                     (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
 
 
-                        bool equilibria = false;
-                        List<Vector> xy = new List<Vector>();
-                        int iter = 0;
-                        while (!equilibria)
-                        {
-                            xy = fr_layout.system_config(out equilibria);
+            bool equilibria = false;
+            List<Vector> xy = new List<Vector>();
+            int iter = 0;
+            while (!equilibria)
+            {
+                xy = fr_layout.system_config(out equilibria);
 
-                            if (iter % 100 == 0)
-                            {
-                                this.xy.Add(xy);
-                            }
+                if (iter % 100 == 0)
+                {
+                    this.xy.Add(xy);
+                }
 
-                            iter++;
-                        }*/
+                iter++;
+            }*/
 
-                        /*Radial r = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                        List<Vector> xy = r.system_config();
-                        this.xy.Add(xy);*/
+            /*Radial r = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+            List<Vector> xy = r.system_config();
+            this.xy.Add(xy);*/
 
-                        /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                        List<Vector> xy = r.system_config();
-                        this.xy.Add(xy);*/
-                    }
+            /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+            List<Vector> xy = r.system_config();
+            this.xy.Add(xy);*/
+        }
 
         // Vertices and Edges Animation
         private void AnimateVertex(int v_id, int x, int y)
@@ -353,58 +360,55 @@ namespace VSGraphViz
             e.BeginStoryboard(sb);
         }
 
-        
+
 
         private Graph<Object> InitGraph(Graph<Object> graph = null)
         {
-            Graph<Object> G;
             Random rnd = new Random();
             vert_info = new List<string>();
-
-            int v_idx = 0;
-
-            /*if (graph == null)
+      
+            for (int i = 0; i < graph.V; i++)
             {
+                vert_info.Add(graph.vertices[i].data.ToString());
+            }
 
-                using (TextReader reader = File.OpenText("input.txt"))
+            if (G == null)
+            {
+                initial_config = null;
+                return graph;
+            }
+
+            int sim = 0;
+            List<Vector> tmp_config = new List<Vector>();
+            for (int i = 0; i < graph.V; i++)
+            {
+                int x = rnd.Next((int)front_canvas.Width-20), y = rnd.Next((int)front_canvas.Height-20);
+                tmp_config.Add(new Vector(x+5, y+5));
+            }
+
+            for (int i = 0; i < G.V; i++)
+            {
+                for (int j = 0; j < graph.V; j++)
                 {
-                    int n, m;
-                    string text = reader.ReadLine();
-                    string[] bits = text.Split(' ');
-                    n = int.Parse(bits[0]);
-                    m = int.Parse(bits[1]);
-                    v_idx = n;
-
-                    G = new Graph<Object>(n);
-                    for (int i = 0; i < n; i++)
+                    if (G.vertices[i].data.ToString().Equals(graph.vertices[j].data.ToString()))
                     {
-                        G.vertices[i].data = i + 1;
-                        vert_info.Add(G.vertices[i].data.ToString());
-                    }
-
-                    for (int i = 0; i < m; i++)
-                    {
-                        text = reader.ReadLine();
-                        bits = text.Split(' ');
-                        int a = int.Parse(bits[0]);
-                        int b = int.Parse(bits[1]);
-                        a--; b--;
-
-                        G.add(a, b);
+                        sim++;
+                        tmp_config[j][0] = initial_config[i][0];
+                        tmp_config[j][1] = initial_config[i][1];
                     }
                 }
             }
-            else
-            {*/
-                G = graph;
-                v_idx = G.V;
-                for (int i = 0; i < G.V; i++)
-                {
-                    vert_info.Add(G.vertices[i].data.ToString());
-                }
-            //}
 
-            return G;
+            if (sim > 0)
+            {
+                initial_config = tmp_config;
+            }
+            else
+            {
+                initial_config = null;
+            }
+
+            return graph;
         }
 
         public void show_graph(Graph<Object> graph)
@@ -415,7 +419,6 @@ namespace VSGraphViz
 
                 xy = new List<List<Vector>>();
                 ComputeXY(G, cur_alg);
-                //ComputeXY(G);
                 InitVis(G, front_canvas);
 
                 current = new int[G.V];
@@ -461,6 +464,8 @@ namespace VSGraphViz
         private List<List<Vector>> xy;
         private int[] current;
         private List<String> vert_info;
+
+        private List<Vector> initial_config;
 
         private int cur_alg;
 
