@@ -10,7 +10,7 @@ namespace VSGraphViz
 {
     public class VSGraphVisualizer
     {
-        Expression root_expression;
+        public Expression root_expression;
         Graph<Object> graph;
 
         public VSGraphVisualizer()

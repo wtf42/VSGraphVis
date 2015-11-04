@@ -3,6 +3,9 @@ using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using EnvDTE;
+using EnvDTE80;
+using EnvDTE90;
 
 namespace VSGraphViz
 {
@@ -62,12 +65,27 @@ namespace VSGraphViz
             }
         }
 
+        private void _debuggerEvents_OnEnterBreakMode(dbgEventReason Reason, ref dbgExecutionAction ExecutionAction)
+        {
+            if (viz.root_expression == null)
+                return;
+            var expr = applicationObject.Debugger.GetExpression(viz.root_expression.Name);
+            viz.UpdateGraph(expr);
+        }
+
+
         public static Control ToolWindowCtl;
         public static VSGraphVisualizer viz;
+        DTE2 applicationObject;
+        DebuggerEvents debuggerEvents;
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            applicationObject = (DTE2)GetService(typeof(DTE));
+            debuggerEvents = applicationObject.Events.DebuggerEvents;
+            debuggerEvents.OnEnterBreakMode += _debuggerEvents_OnEnterBreakMode;
 
             ToolWindowCtl = new Control();
             viz = new VSGraphVisualizer();
