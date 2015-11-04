@@ -9,7 +9,6 @@ using System.IO;
 
 namespace Graph
 {
-    [Serializable]
     public class Vertex<T>
     {
         public Vertex(int id, T data = default(T))
@@ -29,8 +28,7 @@ namespace Graph
         private int _v;
         private T _data;
     }
-
-    [Serializable]
+    
     public class Edge<T>
     {
         public Edge(Vertex<T> from, Vertex<T> to, int weight = 1)
@@ -43,8 +41,7 @@ namespace Graph
         public Vertex<T> v, u;
         public int w;
     }
-
-    [Serializable]
+    
     public class Graph<T> : IEnumerable<Edge<T>>
     {
         public Graph(int V = 0, bool oriented = false)

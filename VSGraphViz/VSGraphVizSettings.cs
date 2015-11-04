@@ -8,5 +8,6 @@ namespace VSGraphViz
 {
     public class VSGraphVizSettings
     {
+        public const int max_rec_depth = 10;
     }
 }
