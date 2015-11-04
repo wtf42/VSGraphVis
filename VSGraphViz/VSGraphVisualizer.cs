@@ -26,6 +26,7 @@ namespace VSGraphViz
                 return;
             BuildGraph(exp);
             MakeVertexCaptions();
+            MakeVertexTooltips();
             UpdateGraphLayout();
         }
 
@@ -129,6 +130,21 @@ namespace VSGraphViz
             }
         }
 
+        void MakeVertexTooltips()
+        {
+            foreach (var gr_vert in graph.vertices)
+            {
+                ExpressionVertex vert = gr_vert.data as ExpressionVertex;
+                Expression exp = vert.exp;
+                string tooltip = exp.Value;
+                foreach (Expression f in exp.DataMembers)
+                {
+                    tooltip += "\n (" + f.Type + ")" + f.Name + "=" + f.Value;
+                }
+                vert.tooltip = tooltip;
+            }
+        }
+
         public void UpdateGraphLayout()
         {
             VSGraphVizPackage.ToolWindowCtl.show_graph(graph, 0);
@@ -138,6 +154,7 @@ namespace VSGraphViz
     {
         public Expression exp;
         public string name;
+        public string tooltip;
         public ExpressionVertex(Expression exp)
         {
             this.exp = exp;

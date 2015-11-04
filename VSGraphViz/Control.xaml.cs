@@ -24,13 +24,16 @@ namespace VSGraphViz
     using SplayTree;
     using Vector;
     using System.Windows.Media.Animation;
-    using System.IO;
+    using System.Collections;
+    using Microsoft.VisualStudio.Shell.Interop;
 
     public partial class Control : UserControl
     {
         public Control()
         {
             InitializeComponent();
+
+            selectionContainer = new Microsoft.VisualStudio.Shell.SelectionContainer();
 
             bc = new BrushConverter();
             // = 13;
@@ -42,17 +45,35 @@ namespace VSGraphViz
 
             cur_alg = 1;
         }
-        public void setText(string text)
+
+        Microsoft.VisualStudio.Shell.SelectionContainer selectionContainer;
+        ITrackSelection trackSelection;
+        internal ITrackSelection TrackSelection
         {
-            tb1.Text = text;
+            get
+            {
+                return trackSelection;
+            }
+            set
+            {
+                trackSelection = value;
+                selectionContainer.SelectableObjects = null;
+                selectionContainer.SelectedObjects = null;
+                trackSelection.OnSelectChange(selectionContainer);
+            }
         }
-        public double getW()
+        public void UpdateSelection()
         {
-            return Width;
+            ITrackSelection track = TrackSelection;
+            if (track != null)
+                track.OnSelectChange(selectionContainer);
         }
-        public double getH()
+        public void SelectList(ArrayList list)
         {
-            return Height;
+            selectionContainer = new Microsoft.VisualStudio.Shell.SelectionContainer(true, false);
+            selectionContainer.SelectableObjects = list;
+            selectionContainer.SelectedObjects = list;
+            UpdateSelection();
         }
 
         private void chb_true(object sender, RoutedEventArgs e)
@@ -133,6 +154,9 @@ namespace VSGraphViz
             tt.Content = vert_info[v];
             vert[v].ToolTip = tt;
 
+            vert[v].MouseRightButtonUp += Control_MouseRightButtonUp;
+            vert[v].Tag = G.vertices[v].data;
+
             vert[v].MouseEnter += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 3; };
             vert[v].MouseLeave += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 2; };
 
@@ -140,6 +164,13 @@ namespace VSGraphViz
             vert[v].MouseLeftButtonUp += VertexMouseUp;
 
             front_canvas.Children.Add(vert[v]);
+        }
+
+        private void Control_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ExpressionVertex expv = (ExpressionVertex)(sender as Grid).Tag;
+            ArrayList list = new ArrayList(expv.exp.DataMembers.OfType<EnvDTE.Expression>().ToList());
+            SelectList(list);
         }
 
         private void InitVis(Graph<Object> G, Canvas front_canvas, int root = -1)
@@ -427,7 +458,8 @@ namespace VSGraphViz
       
             for (int i = 0; i < graph.V; i++)
             {
-                vert_info.Add(graph.vertices[i].data.ToString());
+                //vert_info.Add(graph.vertices[i].data.ToString());
+                vert_info.Add((graph.vertices[i].data as ExpressionVertex).tooltip);
             }
 
             if (G == null)
