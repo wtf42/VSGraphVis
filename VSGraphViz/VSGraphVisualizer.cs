@@ -10,44 +10,22 @@ namespace VSGraphViz
 {
     public class VSGraphVisualizer
     {
+        Expression root_expression;
+        Graph<ExpressionVertex> graph;
+
         public VSGraphVisualizer()
         {
             root_expression = null;
+            graph = null;
         }
+
         public void UpdateGraph(EnvDTE.Expression exp)
         {
             //VSGraphVizPackage.ToolWindowCtl.setText(log_write(exp.DataMembers));
             BuildGraph(exp);
             MakeVertexCaptions();
-        }
-        Expression root_expression;
-        Graph<ExpressionVertex> graph;
-
-        void BuildGraph(Expression root_exp)
-        {
-            root_expression = root_exp;
-            graph = new Graph<ExpressionVertex>();
-            int root = graph.add(new ExpressionVertex(root_exp));
-            BuildGraphRec(root_exp, root, 0);
-        }
-        void BuildGraphRec(Expression exp, int v, int rec_level)
-        {
-            if (rec_level == VSGraphVizSettings.max_rec_depth)
-                return;
-            foreach (Expression e in exp.DataMembers)
-            {
-                if (e.Type != root_expression.Type)
-                    continue;
-                int to = graph.add(new ExpressionVertex(e));
-                BuildGraphRec(e, to, rec_level + 1);
-            }
-        }
-        void MakeVertexCaptions()
-        {
-            foreach(var v in graph.vertices)
-            {
-                v.data.name = "(" + v.data.exp.Type + ") " + v.data.exp.Name + " = " + v.data.exp.Value;
-            }
+            UpdateGraphLayout();
+            //TODO: update toolbox?
         }
         /*
         string log_write(Expressions e)
@@ -59,6 +37,58 @@ namespace VSGraphViz
             }
             return ret;
         }*/
+
+        void BuildGraph(Expression root_exp)
+        {
+            root_expression = root_exp;
+            graph = new Graph<ExpressionVertex>();
+            usedVertices = new SortedSet<string>();
+            int root = graph.add(new ExpressionVertex(root_exp));
+            BuildGraphRec(root_exp, root, 0);
+        }
+
+        SortedSet<string> usedVertices;
+        void BuildGraphRec(Expression exp, int v, int rec_level)
+        {
+            usedVertices.Add(exp.Value);
+            if (rec_level == VSGraphVizSettings.max_rec_depth)
+                return;
+            foreach (Expression e in exp.DataMembers)
+            {
+                if (e.Type == root_expression.Type)
+                {
+                    if (usedVertices.Contains(e.Value))
+                        continue;
+                    int to = graph.add(new ExpressionVertex(e));
+                    BuildGraphRec(e, to, rec_level + 1);
+                }
+                else
+                {
+                    foreach(Expression field in e.DataMembers)
+                    {
+                        if (field.Type != root_expression.Type)
+                            continue;
+                        if (usedVertices.Contains(field.Value))
+                            continue;
+                        int to = graph.add(new ExpressionVertex(field));
+                        BuildGraphRec(field, to, rec_level + 1);
+                    }
+                }
+            }
+        }
+
+        void MakeVertexCaptions()
+        {
+            foreach(var v in graph.vertices)
+            {
+                v.data.name = "(" + v.data.exp.Type + ") " + v.data.exp.Name + " = " + v.data.exp.Value;
+            }
+        }
+
+        public void UpdateGraphLayout()
+        {
+            //
+        }
     }
     public class ExpressionVertex
     {
