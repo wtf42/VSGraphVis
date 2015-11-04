@@ -70,6 +70,12 @@ namespace Radial
         */
         void compute_inc()
         {
+            if (G.V == 1)
+            {
+                inc[0] = 0;
+                return;
+            }
+
             for (int p = 0; p < G.V; p++)
             {
                 int cur = -1;

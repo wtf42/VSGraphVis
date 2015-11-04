@@ -193,7 +193,7 @@ namespace VSGraphViz
             int dummy = G.V;
 
 
-            FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
+            /*FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
                                      square_distance_repulsive_force.f,
                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
 
@@ -211,11 +211,11 @@ namespace VSGraphViz
                 }
 
                 iter++;
-            }
+            }*/
 
-            /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
+            Radial r = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
             List<Vector> xy = r.system_config();
-            this.xy.Add(xy);*/
+            this.xy.Add(xy);
         }
 
         // Vertices and Edges Animation

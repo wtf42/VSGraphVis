@@ -80,9 +80,15 @@ namespace Graph
         {
             int from = e.v.v, to = e.u.v;
 
-            adj[from].Add(to);
-            weight[from].Add(e.w);
-            if (!directed)
+            bool cont = false;
+            if (!adj[from].Contains(to))
+            {
+                adj[from].Add(to);
+                weight[from].Add(e.w);
+            }
+            else cont = true;
+
+            if (!directed && !cont)
             {
                 adj[to].Add(from);
                 weight[to].Add(e.w);
