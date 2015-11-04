@@ -111,32 +111,33 @@ namespace VSGraphViz
             ve.StrokeThickness = 2;
             ve.Fill = (Brush)bc.ConvertFrom("#FFB7B7B7");
 
-            ve.Cursor = Cursors.Hand;
+            vert[v].Cursor = Cursors.Hand;
             vert[v].Children.Add(ve);
 
             TextBlock tb = new TextBlock();
-            tb.MaxWidth = 85;
-            tb.MaxHeight = 42;
+            tb.MaxWidth = VSGraphVizSettings.node_width;
+            tb.MaxHeight = VSGraphVizSettings.node_height;
             tb.Text = G.vertices[v].data.ToString();
+            tb.FontSize = VSGraphVizSettings.node_font_size;
             tb.VerticalAlignment = VerticalAlignment.Center;
             tb.HorizontalAlignment = HorizontalAlignment.Center;
 
             vert[v].Children.Add(tb);
 
-            ve.Height = 45;
-            ve.Width = 90;
+            ve.Height = VSGraphVizSettings.node_height;
+            ve.Width = VSGraphVizSettings.node_width;
             vert_x = (int)ve.Width / 2;
             vert_y = (int)ve.Height / 2;
 
             ToolTip tt = new System.Windows.Controls.ToolTip();
             tt.Content = vert_info[v];
-            ve.ToolTip = tt;
+            vert[v].ToolTip = tt;
 
-            //ve.MouseEnter += (o, e) => { ve.StrokeThickness = 3; };
-            //ve.MouseLeave += (o, e) => { ve.StrokeThickness = 2; };
+            vert[v].MouseEnter += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 3; };
+            vert[v].MouseLeave += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 2; };
 
-            //vert[v].MouseLeftButtonDown += VertexMouseDown;
-            //vert[v].MouseLeftButtonUp += VertexMouseUp;
+            vert[v].MouseLeftButtonDown += VertexMouseDown;
+            vert[v].MouseLeftButtonUp += VertexMouseUp;
 
             front_canvas.Children.Add(vert[v]);
         }
@@ -144,6 +145,7 @@ namespace VSGraphViz
         private void InitVis(Graph<Object> G, Canvas front_canvas, int root = -1)
         {
             front_canvas.Children.Clear();
+            
             edge = new List<List<KeyValuePair<int, Line>>>();
 
             vert = new List<Grid>(G.V);
@@ -184,16 +186,19 @@ namespace VSGraphViz
         private void VertexMouseDown(object sender, MouseEventArgs e)
         {
             moving_obj = sender;
+            UIElement src = (UIElement)sender;
+            Grid g = src as Grid;
+            Mouse.Capture(g.Children[1]);
 
-            Grid tmp = sender as Grid;
-            Mouse.Capture(tmp);
-            X_shape = Canvas.GetLeft(tmp);
-            Y_shape = Canvas.GetTop(tmp);
+            //Rectangle
 
-            X = e.GetPosition((UIElement)tmp.Parent).X;
-            Y = e.GetPosition((UIElement)tmp.Parent).Y;
+            X_shape = Canvas.GetLeft(src);
+            Y_shape = Canvas.GetTop(src);
 
-            Canvas.SetZIndex(tmp, 1);
+            X = e.GetPosition(front_canvas).X;
+            Y = e.GetPosition(front_canvas).Y;
+
+            Canvas.SetZIndex(src, 1);
         }
 
         private void VertexMouseUp(object sender, MouseEventArgs e)

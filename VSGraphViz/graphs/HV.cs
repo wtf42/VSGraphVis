@@ -113,8 +113,8 @@ namespace HV
             {
                 if (to != p && to != max_w)
                 {
-                    X[to][0] = (prev == -1) ? X[v][0] : (right[prev] + 1);
-                    X[to][1] = X[v][1] - 1;
+                    X[to][0] = (prev == -1) ? X[v][0] : (right[prev] + delta);
+                    X[to][1] = X[v][1] - delta;
 
                     prev = to;
 
@@ -126,8 +126,8 @@ namespace HV
 
             if (max_w != p)
             {
-                X[max_w][0] = (prev == -1) ? (X[v][0] + 1) :
-                                            (right[prev] + 1);
+                X[max_w][0] = (prev == -1) ? (X[v][0] + delta) :
+                                            (right[prev] + delta);
                 X[max_w][1] = X[v][1];
 
                 setPos(max_w, v, ref X, ref GA);
@@ -142,6 +142,8 @@ namespace HV
         int bottom;
         int sx, sy;
         int root, p_root;
+
+        const int delta = 5;
 
         const int INF = (int)1e9;
     }
