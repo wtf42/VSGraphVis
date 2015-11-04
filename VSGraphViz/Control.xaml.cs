@@ -111,7 +111,7 @@ namespace VSGraphViz
             ve.StrokeThickness = 2;
             ve.Fill = (Brush)bc.ConvertFrom("#FFB7B7B7");
 
-            ve.Cursor = Cursors.Hand;
+            vert[v].Cursor = Cursors.Hand;
             vert[v].Children.Add(ve);
 
             TextBlock tb = new TextBlock();
@@ -130,7 +130,8 @@ namespace VSGraphViz
 
             ToolTip tt = new System.Windows.Controls.ToolTip();
             tt.Content = vert_info[v];
-            ve.ToolTip = tt;
+            vert[v].ToolTip = tt;
+
 
             //ve.MouseEnter += (o, e) => { ve.StrokeThickness = 3; };
             //ve.MouseLeave += (o, e) => { ve.StrokeThickness = 2; };
