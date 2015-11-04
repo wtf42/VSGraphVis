@@ -30,7 +30,7 @@ namespace VSGraphViz
             InitializeComponent();
 
             bc = new BrushConverter();
-            vert_r = 13;
+            // = 13;
 
             //MainWindow.Background = (Brush)bc.ConvertFrom("#FFF1F1F1");
 
@@ -75,8 +75,7 @@ namespace VSGraphViz
             ve.Stroke = (Brush)bc.ConvertFrom("#FF636363");
             ve.StrokeThickness = 2;
             ve.Fill = (Brush)bc.ConvertFrom("#FFB7B7B7");
-            ve.Height = 2 * vert_r;
-            ve.Width = 2 * vert_r;
+            
             ve.Cursor = Cursors.Hand;
             vert[v].Children.Add(ve);
 
@@ -87,11 +86,14 @@ namespace VSGraphViz
 
             vert[v].Children.Add(tb);
 
+            ve.Height = 25;
+            ve.Width = 120;
+            vert_x = (int)ve.Width / 2;
+            vert_y = (int)ve.Height / 2;
 
             ToolTip tt = new System.Windows.Controls.ToolTip();
             tt.Content = vert_info[v];
             ve.ToolTip = tt;
-
 
             //ve.MouseEnter += (o, e) => { ve.StrokeThickness = 3; };
             //ve.MouseLeave += (o, e) => { ve.StrokeThickness = 2; };
@@ -112,6 +114,7 @@ namespace VSGraphViz
             foreach (var e in G)
                 AddEdge(e.v.v, e.u.v);
 
+            
             for (int i = 0; i < G.V; i++)
             {
                 AddVertex(i);
@@ -190,7 +193,7 @@ namespace VSGraphViz
 
             FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
                                      square_distance_repulsive_force.f,
-                                     900, 500);
+                                     (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
 
 
             bool equilibria = false;
@@ -247,8 +250,9 @@ namespace VSGraphViz
             // incident edges animation
             for (int i = 0; i < edge[v_id].Count; i++)
             {
-                AnimateEdge(edge[v_id][i].Value, (int)x_anim.To + vert_r,
-                                                 (int)y_anim.To + vert_r,
+
+                AnimateEdge(edge[v_id][i].Value, (int)x_anim.To + vert_x,
+                                                 (int)y_anim.To + vert_y,
                                                  (int)duration,
                                                  v_id < edge[v_id][i].Key);
             }
@@ -361,10 +365,10 @@ namespace VSGraphViz
                         to = edge[v][j].Key;
                         if (v > to) continue;
 
-                        edge[v][j].Value.X1 = xy[0][v][0] + vert_r;
-                        edge[v][j].Value.Y1 = xy[0][v][1] + vert_r;
-                        edge[v][j].Value.X2 = xy[0][to][0] + vert_r;
-                        edge[v][j].Value.Y2 = xy[0][to][1] + vert_r;
+                        edge[v][j].Value.X1 = xy[0][v][0] + vert_x;
+                        edge[v][j].Value.Y1 = xy[0][v][1] + vert_y;
+                        edge[v][j].Value.X2 = xy[0][to][0] + vert_x;
+                        edge[v][j].Value.Y2 = xy[0][to][1] + vert_y;
                     }
                 }
 
@@ -384,8 +388,9 @@ namespace VSGraphViz
         Graph<Object> G;
 
         BrushConverter bc;
-        int vert_r;
 
+        int vert_x;
+        int vert_y;
         bool show;
         private List<List<KeyValuePair<int, Line>>> edge;
         private List<Grid> vert;
