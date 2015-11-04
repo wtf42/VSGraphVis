@@ -41,46 +41,46 @@ namespace VSGraphViz
         void BuildGraph(Expression root_exp)
         {
             root_expression = root_exp;
+
             graph = new Graph<Object>();
-            usedVertices = new SortedSet<string>();
+
+            usedVertices = new SortedDictionary<string, int>();
             int root = graph.add(new ExpressionVertex(root_exp));
             BuildGraphRec(root_exp, root, 0);
         }
-
-        SortedSet<string> usedVertices;
+        
+        SortedDictionary<string, int> usedVertices;
         void BuildGraphRec(Expression exp, int v, int rec_level)
         {
-            usedVertices.Add(exp.Value);
+            usedVertices.Add(exp.Value, v);
             if (rec_level == VSGraphVizSettings.max_rec_depth)
                 return;
-            foreach (Expression e in exp.DataMembers)
+            foreach (Expression m in exp.DataMembers)
             {
-                if (e.Type == root_expression.Type)
+                if (m.Type == root_expression.Type)
                 {
-                    if (usedVertices.Contains(e.Value))
-                        continue;
-                    if (!(isValidVertex(e)))
-                        continue;
-                    int to = graph.add(new ExpressionVertex(e));
-                    graph.add(v, to);
-                    BuildGraphRec(e, to, rec_level + 1);
+                    addVertexRec(v, m, rec_level);
                 }
                 else
                 {
-                    foreach(Expression field in e.DataMembers)
+                    foreach(Expression field in m.DataMembers)
                     {
-                        if (field.Type != root_expression.Type)
-                            continue;
-                        if (usedVertices.Contains(field.Value))
-                            continue;
-                        if (!(isValidVertex(field)))
-                            continue;
-                        int to = graph.add(new ExpressionVertex(field));
-                        graph.add(v, to);
-                        BuildGraphRec(field, to, rec_level + 1);
+                        if (field.Type == root_expression.Type)
+                            addVertexRec(v, field, rec_level);
                     }
                 }
             }
+        }
+        void addVertexRec(int par, Expression exp, int rec_level)
+        {
+            if (!(isValidVertex(exp)))
+                return;
+            if (!usedVertices.ContainsKey(exp.Value))
+            {
+                int to = graph.add(new ExpressionVertex(exp));
+                BuildGraphRec(exp, to, rec_level + 1);
+            }
+            graph.add(par, usedVertices[exp.Value]);
         }
 
         bool isValidVertex(Expression exp)
