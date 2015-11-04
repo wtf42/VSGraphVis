@@ -34,7 +34,7 @@ namespace Radial
             c   = new double[G.V];
             i   = new double[G.V];
             inc = new double[G.V];
-            d = 50.0;
+            d = 100.0;
 
             GA = new TreeAlgo<Object>(G);
             if (root == -1)
