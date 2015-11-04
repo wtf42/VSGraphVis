@@ -21,6 +21,9 @@ namespace VSGraphViz
 
         public void UpdateGraph(EnvDTE.Expression exp)
         {
+
+            if (VSGraphVizPackage.ToolWindowCtl.hold)
+                return;
             BuildGraph(exp);
             MakeVertexCaptions();
             UpdateGraphLayout();

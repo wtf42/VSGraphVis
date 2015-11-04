@@ -54,6 +54,15 @@ namespace VSGraphViz
             return Height;
         }
 
+        private void chb_true(object sender, RoutedEventArgs e)
+        {
+            hold = true;
+        }
+        private void chb_false(object sender, RoutedEventArgs e)
+        {
+            hold = false;
+        }
+
         private void changeAlg(object sender, SelectionChangedEventArgs args)
         {
             if (G == null)
@@ -506,7 +515,7 @@ namespace VSGraphViz
         private int cur_alg;
 
         bool animation_complete;
-
+        public bool hold;
         double X, Y;
         double X_shape, Y_shape;
         object moving_obj;

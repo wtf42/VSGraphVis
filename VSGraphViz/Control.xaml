@@ -12,10 +12,11 @@
     </UserControl.Resources>
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <ComboBox Name="cb" Height="25" Width="90" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <ComboBoxItem Name="a">Alg 1</ComboBoxItem>
-            <ComboBoxItem Name="b">Alg 2</ComboBoxItem>
-            <ComboBoxItem Name="c">Alg 3</ComboBoxItem>
+        <CheckBox Name="chb" Height="25" Width="50" Checked="chb_true" Unchecked="chb_false" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0">hold</CheckBox>
+        <ComboBox Name="cb" Height="25" Width="Auto" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left" SelectedIndex="0">
+            <ComboBoxItem Name="a">Fruchterman-Reingold</ComboBoxItem>
+            <ComboBoxItem Name="b">Radial</ComboBoxItem>
+            <ComboBoxItem Name="c">RightHeavy</ComboBoxItem>
         </ComboBox>
         <Canvas x:Name="front_canvas" Width="580" Height="420" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
