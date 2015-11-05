@@ -457,7 +457,7 @@ namespace VSGraphViz
             List<Vector> tmp_config = new List<Vector>();
             for (int i = 0; i < graph.V; i++)
             {
-                int x = rnd.Next(1, canvas_width()), y = rnd.Next(1, canvas_height());  ///!!!!!!!
+                int x = rnd.Next(1, canvas_width()), y = rnd.Next(1, canvas_height());  
                 tmp_config.Add(new Vector(x, y));
             }
 
@@ -541,12 +541,12 @@ namespace VSGraphViz
 
         private int canvas_width()
         {
-            return (int)front_canvas.ActualWidth - 2 * VSGraphVizSettings.node_width;
+            return (int)front_canvas.ActualWidth - VSGraphVizSettings.node_width;
         }
 
         private int canvas_height()
         {
-            return (int)front_canvas.ActualHeight - 2 * VSGraphVizSettings.node_height;
+            return (int)front_canvas.ActualHeight - VSGraphVizSettings.node_height;
         }
 
         List<GraphLayout> grap_layout_algo;
