@@ -8,7 +8,7 @@
              VerticalAlignment="Stretch"
              HorizontalAlignment="Stretch"
              MinHeight="300"
-             MinWidth="300"
+             MinWidth="400"
              Name="ToolWindowControl">
     <Grid>
         <Menu Background="Transparent" Height="20" VerticalAlignment="Top">

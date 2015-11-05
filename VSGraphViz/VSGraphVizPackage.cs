@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using EnvDTE;
 using EnvDTE80;
 using EnvDTE90;
+using Graph;
 
 namespace VSGraphViz
 {
@@ -30,7 +31,7 @@ namespace VSGraphViz
     // This attribute registers a tool window exposed by this package.
     [ProvideToolWindow(typeof(ToolWindow),
         MultiInstances = false,
-        Width = 200, Height = 200,
+        Width = 600, Height = 450,
         Orientation = ToolWindowOrientation.Right)]
     [Guid(GuidList.guidCommandTargetRGBPkgString)]
     public sealed class VSGraphVizPackage : Package
@@ -68,30 +69,21 @@ namespace VSGraphViz
             }
         }
 
-        private void _debuggerEvents_OnEnterBreakMode(dbgEventReason Reason, ref dbgExecutionAction ExecutionAction)
-        {
-            if (viz.root_expression == null)
-                return;
-            var expr = applicationObject.Debugger.GetExpression(viz.root_expression.Name);
-            viz.UpdateGraph(expr);
-        }
-
-
-        public static Control ToolWindowCtl;
-        public static VSGraphVisualizer viz;
         DTE2 applicationObject;
         DebuggerEvents debuggerEvents;
+        public static ExpressionGraph expressionGraph;
 
         protected override void Initialize()
         {
             base.Initialize();
 
-            applicationObject = (DTE2)GetService(typeof(DTE));
-            debuggerEvents = applicationObject.Events.DebuggerEvents;
-            debuggerEvents.OnEnterBreakMode += _debuggerEvents_OnEnterBreakMode;
+            expressionGraph = new ExpressionGraph();
 
-            ToolWindowCtl = new Control();
-            viz = new VSGraphVisualizer();
+            applicationObject = (DTE2)GetService(typeof(DTE));
+
+            debuggerEvents = applicationObject.Events.DebuggerEvents;
+            debuggerEvents.OnEnterBreakMode += DebuggerEvents_OnEnterBreakMode;
+            debuggerEvents.OnEnterDesignMode += DebuggerEvents_OnEnterDesignMode;
 
             // Add our command handlers for menu (commands must exist in the .vsct file)
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
@@ -102,6 +94,20 @@ namespace VSGraphViz
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
             }
+        }
+
+        private void DebuggerEvents_OnEnterBreakMode(dbgEventReason Reason, ref dbgExecutionAction ExecutionAction)
+        {
+            var old_expr = expressionGraph.GetExpression;
+            if (old_expr == null)
+                return;
+            var new_expr = applicationObject.Debugger.GetExpression(old_expr.Name);
+            expressionGraph.SetExpression(new_expr);
+        }
+
+        private void DebuggerEvents_OnEnterDesignMode(dbgEventReason Reason)
+        {
+            expressionGraph.SetExpression(null);
         }
 
         public static void VSOutputLog(string str)
@@ -116,7 +122,7 @@ namespace VSGraphViz
             outWindow.GetPane(ref customGuid, out customPane);
 
             customPane.OutputString(str + "\n");
-            customPane.Activate(); // Brings this pane into view
+            customPane.Activate();
         }
     }
 }

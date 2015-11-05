@@ -28,7 +28,7 @@ namespace VSGraphViz
             {
                 return;
             }
-            if (VSGraphVizPackage.viz == null)
+            if (VSGraphVizPackage.expressionGraph == null)
                 return;
 
             var exp = FindUnderMousePointer(m_debugger, e);
@@ -36,7 +36,7 @@ namespace VSGraphViz
                 return;
             if (!exp.IsValidValue)
                 return;
-            VSGraphVizPackage.viz.UpdateGraph(exp);
+            VSGraphVizPackage.expressionGraph.SetExpression(exp);
         }
 
         Expression FindUnderMousePointer(EnvDTE.Debugger debugger, MouseHoverEventArgs e)
