@@ -28,7 +28,10 @@ namespace VSGraphViz
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
     // This attribute registers a tool window exposed by this package.
-    [ProvideToolWindow(typeof(ToolWindow), MultiInstances=true)]
+    [ProvideToolWindow(typeof(ToolWindow),
+        MultiInstances = false,
+        Width = 200, Height = 200,
+        Orientation = ToolWindowOrientation.Right)]
     [Guid(GuidList.guidCommandTargetRGBPkgString)]
     public sealed class VSGraphVizPackage : Package
     {
@@ -99,6 +102,21 @@ namespace VSGraphViz
                 MenuCommand menuToolWin = new MenuCommand(ShowToolWindow, toolwndCommandID);
                 mcs.AddCommand(menuToolWin);
             }
+        }
+
+        public static void VSOutputLog(string str)
+        {
+            IVsOutputWindow outWindow = Package.GetGlobalService(typeof(SVsOutputWindow)) as IVsOutputWindow;
+
+            Guid customGuid = new Guid("0F44E2D1-F5FA-4d2d-AB30-22BE8ECD9789");
+            string customTitle = "VSGraphViz";
+            outWindow.CreatePane(ref customGuid, customTitle, 1, 1);
+
+            IVsOutputWindowPane customPane;
+            outWindow.GetPane(ref customGuid, out customPane);
+
+            customPane.OutputString(str + "\n");
+            customPane.Activate(); // Brings this pane into view
         }
     }
 }

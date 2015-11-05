@@ -27,6 +27,7 @@ namespace VSGraphViz
     using System.Windows.Media.Animation;
     using System.Collections;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
 
     public partial class Control : UserControl
     {
@@ -80,6 +81,12 @@ namespace VSGraphViz
             selectionContainer.SelectableObjects = list;
             selectionContainer.SelectedObjects = list;
             UpdateSelection();
+        }
+
+        public void OnSizeHandler()
+        {
+            VSGraphVizPackage.VSOutputLog("newW=" + this.ActualWidth);
+            VSGraphVizPackage.VSOutputLog("newH=" + this.ActualHeight);
         }
 
         private void chb_true(object sender, RoutedEventArgs e)
