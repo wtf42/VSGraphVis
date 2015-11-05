@@ -35,6 +35,9 @@ namespace VSGraphViz
 
             selectionContainer = new Microsoft.VisualStudio.Shell.SelectionContainer();
 
+            ToolTipService.ShowDurationProperty.OverrideMetadata(
+                typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
+
             bc = new BrushConverter();
             // = 13;
 
@@ -205,6 +208,7 @@ namespace VSGraphViz
 
             ToolTip tt = new System.Windows.Controls.ToolTip();
             tt.Content = vert_info[v];
+            tt.StaysOpen = true;
             vert[v].ToolTip = tt;
 
             vert[v].MouseRightButtonUp += Control_MouseRightButtonUp;
