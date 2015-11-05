@@ -19,5 +19,11 @@ namespace VSGraphViz
             base.Content = VSGraphVizPackage.ToolWindowCtl;
             base.Caption = "VS Graph Vis";
         }
+        public override void OnToolWindowCreated()
+        {
+            base.OnToolWindowCreated();
+
+            VSGraphVizPackage.ToolWindowCtl.TrackSelection = (ITrackSelection)GetService(typeof(STrackSelection));
+        }
     }
 }
