@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
              xmlns:local="clr-namespace:VSGraphViz"
-             Height="620" Width="700" MinHeight="620" MinWidth="700"
+             Height="620" Width="650"
              Name="ToolWindow">
     <UserControl.Resources>
     </UserControl.Resources>
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
-        <Menu>
+        <Menu Background="Transparent">
             <MenuItem Header="Algorithm">
                 <MenuItem Header="Fruchterman-Reingold" Click="select_FR" IsChecked="True"></MenuItem>
                 <MenuItem Header="Radial" Click="select_Radial"></MenuItem>
@@ -22,6 +22,6 @@
             </MenuItem>
         </Menu>
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <Canvas x:Name="front_canvas" Width="600" Height="510" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Canvas x:Name="front_canvas" Width="520" Height="510" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>

@@ -79,16 +79,25 @@ namespace VSGraphViz
         private void chb_true(object sender, RoutedEventArgs e)
         {
             hold = true;
-            /*unfreeze.IsChecked = false;
-            freeze.IsChecked = true;*/
+
             menu_update(sender);
         }
         private void chb_false(object sender, RoutedEventArgs e)
         {
             hold = false;
-            /*unfreeze.IsChecked = true;
-            freeze.IsChecked = false;*/
+
             menu_update(sender);
+        }
+
+        private void changle_algo(object sender, int id)
+        {
+            if (G == null)
+                return;
+
+            menu_update(sender);
+
+            cur_alg = id;
+            show_graph(G, 0);
         }
 
         private void menu_update(object sender)
@@ -107,57 +116,17 @@ namespace VSGraphViz
 
         private void select_FR(object sender, RoutedEventArgs e)
         {
-            if (G == null)
-                return;
-
-            menu_update(sender);
-
-            cur_alg = 1;
-            show_graph(G, 0);
+            changle_algo(sender, 1);
         }
 
         private void select_Radial(object sender, RoutedEventArgs e)
         {
-            if (G == null)
-                return;
-
-            menu_update(sender);
-
-            cur_alg = 2;
-            show_graph(G, 0);
+            changle_algo(sender, 2);
         }
 
         private void select_HV(object sender, RoutedEventArgs e)
         {
-            if (G == null)
-                return;
-
-            menu_update(sender);
-
-            cur_alg = 3;
-            show_graph(G, 0);
-        }
-
-        private void changeAlg(object sender, SelectionChangedEventArgs args)
-        {
-            if (G == null)
-                return;
-
-            ComboBoxItem lbi = ((sender as ComboBox).SelectedItem as ComboBoxItem);
-            String curName = lbi.Name;
-            switch (curName)
-            {
-                case "a":
-                    cur_alg = 1;
-                    break;
-                case "b":
-                    cur_alg = 2;
-                    break;
-                case "c":
-                    cur_alg = 3;
-                    break;
-            }
-            show_graph(G, 0);
+            changle_algo(sender, 3);
         }
 
         private void AddEdge(int v, int u)
@@ -312,6 +281,12 @@ namespace VSGraphViz
                 for (int i = 0; i < vert.Count; i++)
                     if (vert[i] == tmp) cur_vertex = i;
 
+                if (initial_config != null && initial_config.Count > cur_vertex)
+                {
+                    initial_config[cur_vertex][0] = X;
+                    initial_config[cur_vertex][1] = Y;
+                }
+
                 for (int i = 0; edge.Count > 0 && i < edge[cur_vertex].Count; i++)
                 {
                     AnimateEdge(edge[cur_vertex][i].Value,
@@ -391,34 +366,6 @@ namespace VSGraphViz
                     initial_config.Add(new Vector(v[0], v[1]));
             }
            
-
-            /*FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
-                                     square_distance_repulsive_force.f,
-                                     (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-
-
-            bool equilibria = false;
-            List<Vector> xy = new List<Vector>();
-            int iter = 0;
-            while (!equilibria)
-            {
-                xy = fr_layout.system_config(out equilibria);
-
-                if (iter % 100 == 0)
-                {
-                    this.xy.Add(xy);
-                }
-
-                iter++;
-            }*/
-
-            /*Radial r = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-            List<Vector> xy = r.system_config();
-            this.xy.Add(xy);*/
-
-            /*RightHeavyHV r = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-            List<Vector> xy = r.system_config();
-            this.xy.Add(xy);*/
         }
 
         // Vertices and Edges Animation
