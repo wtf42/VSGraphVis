@@ -347,7 +347,7 @@ namespace FruchtermanReingold
 
         public void Add(int key, double x, double y)
         {
-            get_cell(x, y).Add(key);
+                get_cell(x, y).Add(key);
         }
 
 
@@ -362,8 +362,10 @@ namespace FruchtermanReingold
                     int _W, int _H, List<Vector> initial_config = null)
             : base(_G, fattractive, frepulsive, _W, _H, initial_config)
         {
-            grid = new Grid<ST<int>>((int)Math.Ceiling(H / (k * 2.0)),
-                                (int)Math.Ceiling(W / (k * 2.0)), H, W);
+            int rows = (int)Math.Ceiling(H / (k * 2.0));
+            int cols = (int)Math.Ceiling(W / (k * 2.0));
+            grid = new Grid<ST<int>>(rows,
+                                cols, H, W);
             neighbour = new int[8, 2] { { 1, 0 }, 
                                         { -1, 0 }, 
                                         { 0, 1 }, 

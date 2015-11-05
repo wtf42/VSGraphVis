@@ -579,12 +579,12 @@ namespace VSGraphViz
 
         private int canvas_width()
         {
-            return (int)front_canvas.ActualWidth - VSGraphVizSettings.node_width;
+            return Math.Max((int)front_canvas.ActualWidth - VSGraphVizSettings.node_width, 0);
         }
 
         private int canvas_height()
         {
-            return (int)front_canvas.ActualHeight - VSGraphVizSettings.node_height;
+            return Math.Max((int)front_canvas.ActualHeight - VSGraphVizSettings.node_height, 0);
         }
 
         List<GraphLayout> grap_layout_algo;
