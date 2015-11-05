@@ -22,12 +22,6 @@
             </MenuItem>
         </Menu>
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <!--<CheckBox Name="chb" Height="25" Width="50" Checked="chb_true" Unchecked="chb_false" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0">hold</CheckBox>-->
-        <!--<ComboBox Name="cb" Height="25" Width="Auto" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left" SelectedIndex="0">
-            <ComboBoxItem Name="a">Fruchterman-Reingold</ComboBoxItem>
-            <ComboBoxItem Name="b">Radial</ComboBoxItem>
-            <ComboBoxItem Name="c">RightHeavy</ComboBoxItem>
-        </ComboBox>-->
         <Canvas x:Name="front_canvas" Width="600" Height="510" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>
