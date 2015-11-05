@@ -325,16 +325,22 @@ namespace VSGraphViz
                 return;
             }
 
-            this.xy = grap_layout_algo[cur_alg-1].system_config((int)front_canvas.ActualWidth, 
+            List<Vector> config = new List<Vector>();
+
+            this.xy = grap_layout_algo[cur_alg - 1].system_config((int)front_canvas.ActualWidth,
                                                         (int)front_canvas.ActualHeight,
-                                                        G, -1, -1,
+                                                        G,
+                                                        out config,
+                                                        -1, -1,
                                                         initial_config);
 
 
-            if (xy.Count > 0)
+            if (config.Count > 0 /*&& xy.Count > 0*/)
             {
                 initial_config = new List<Vector>();
-                foreach (Vector v in xy[xy.Count - 1])
+                /*foreach (Vector v in xy[xy.Count - 1])
+                    initial_config.Add(new Vector(v[0], v[1]));*/
+                foreach (Vector v in config)
                     initial_config.Add(new Vector(v[0], v[1]));
             }
            

@@ -18,7 +18,7 @@ namespace Layout
             comp = new Rect(0, 0, W, H);
         }
 
-        public static void getRect(ref List<Vector> X, ref Vector lt, ref Vector rb)
+        public void getRect(ref List<Vector> X, ref Vector lt, ref Vector rb)
         {
             lt = new Vector(X[0][0], X[0][1]);
             rb = new Vector(X[0][0], X[0][1]);
@@ -34,11 +34,6 @@ namespace Layout
 
             if (rb[0] - lt[0] == 0) rb[0]++;
             if (lt[1] - rb[1] == 0) lt[1]++;
-        }
-
-        public Vector getCoord(Vector p, Vector lt, Vector rb)
-        {
-            double marginX, marginY;
 
             double P = (rb[0] - lt[0]) / (lt[1] - rb[1]);
             if (P <= 1)
@@ -51,12 +46,18 @@ namespace Layout
             }
             marginY = (marginX - (comp.width() - (comp.height() - 40) * P) / 2) / P;
 
+        }
+
+        public Vector getCoord(Vector p, Vector lt, Vector rb, bool rev = false)
+        {
+            
             double dx = Math.Abs(rb[0] - lt[0]) / (comp.width() - 2 * marginX),
                     dy = Math.Abs(rb[1] - lt[1]) / (comp.height() - 2 * marginY);
 
             Vector res = new Vector(2);
             res[0] = ((p[0] - lt[0]) / dx + marginX + comp.x);
-            res[1] = /*(double)H -*/ (comp.height() + (rb[1] - p[1]) / dy - marginY + comp.y);
+            if (rev) res[1] = (double)H - (comp.height() + (rb[1] - p[1]) / dy - marginY + comp.y);
+            else     res[1] = (comp.height() + (rb[1] - p[1]) / dy - marginY + comp.y);
 
             return res;
         }
@@ -80,6 +81,7 @@ namespace Layout
         Rect comp;
 
         int W, H;
+        public double marginX, marginY;
     }
 
 }

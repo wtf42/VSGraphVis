@@ -16,6 +16,7 @@ namespace Radial
     {
         public List<List<Vector>> system_config(int W, int H,
                                          Graph<Object> G,
+                                         out List<Vector> config,
                                          int root = -1, int p_root = -1,
                                          List<Vector> initial_config = null)
         {
@@ -23,7 +24,8 @@ namespace Radial
 
             List<List<Vector>> X = new List<List<Vector>>();
 
-            X.Add(r.system_config(root, p_root));
+            config = r.system_config(root, p_root);
+            X.Add(config);
 
             return X;
         }
@@ -73,7 +75,7 @@ namespace Radial
                 X[v] = new Vector(h * Math.Cos(c[v]), h * Math.Sin(c[v]));
             }
 
-            Layout.getRect(ref X, ref lt, ref rb);
+            layout.getRect(ref X, ref lt, ref rb);
             for (int i = 0; i < X.Count; i++)
                 X[i] = layout.getCoord(X[i], lt, rb);
            

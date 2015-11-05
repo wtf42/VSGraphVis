@@ -12,7 +12,8 @@ namespace GraphLayout
     public interface GraphLayout
     {
         List<List<Vector>> system_config(int W, int H, 
-                                         Graph<Object> G, 
+                                         Graph<Object> G,
+                                         out List<Vector> config,
                                          int root = -1, int p_root = -1, 
                                          List<Vector> initial_config = null);
     }

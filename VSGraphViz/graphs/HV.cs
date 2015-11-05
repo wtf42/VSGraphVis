@@ -16,6 +16,7 @@ namespace HV
     {
         public List<List<Vector>> system_config(int W, int H,
                                          Graph<Object> G,
+                                         out List<Vector> config,
                                          int root = -1, int p_root = -1,
                                          List<Vector> initial_config = null)
         {
@@ -25,13 +26,16 @@ namespace HV
             List<Vector> X = hv.system_config(G, root, p_root);
 
             Vector lt = new Vector(0,0), rb = new Vector(0,0);
-            Layout.getRect(ref X, ref lt, ref rb);
+            layout.getRect(ref X, ref lt, ref rb);
 
             for (int i = 0; i < X.Count; i++)
                 X[i] = layout.getCoord(X[i], lt, rb);
 
             List<List<Vector>> _X = new List<List<Vector>>();
             _X.Add(X);
+
+            config = X;
+
             return _X;
         }
     }

@@ -14,13 +14,18 @@ namespace FruchtermanReingold
     using SplayTree;
     using Vector;
     using GraphLayout;
+    using Layout;
 
     public class FRLayout : GraphLayout
     {
         public List<List<Vector>> system_config(int W, int H, Graph<Object> G,
+                                                out List<Vector> config,
                                                 int root = -1, int p_root = -1,
                                                 List<Vector> initial_config = null)
         {
+            Layout layout = new Layout(W, H);
+            Vector lt = new Vector(0, H), rb = new Vector(W, 0);
+
             List<List<Vector>> X = new List<List<Vector>>();
 
             FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
@@ -35,11 +40,19 @@ namespace FruchtermanReingold
             if (initial_config != null)
                 X.Add(initial_config);
 
+            config = new List<Vector>();
             while (!equilibria)
             {
                 xy = fr_layout.system_config(out equilibria);
                 if (iter % 100 == 0 || equilibria)
                 {
+                    config.Clear();
+                    for (int i = 0; i < xy.Count; i++)
+                    {
+                        config.Add(new Vector(xy[i][0] + layout.marginX, xy[i][1] + layout.marginY));
+                        xy[i] = layout.getCoord(xy[i], lt, rb, true);
+                    }
+
                     X.Add(xy);
                 }
                 iter++;
