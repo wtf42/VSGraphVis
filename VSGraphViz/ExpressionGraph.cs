@@ -27,9 +27,16 @@ namespace VSGraphViz
         {
             root_expression = exp;
 
-            RebuildGraph();
-            MakeVertexCaptions();
-            MakeVertexTooltips();
+            if (root_expression == null)
+            {
+                graph = null;
+            }
+            else
+            {
+                RebuildGraph();
+                MakeVertexCaptions();
+                MakeVertexTooltips();
+            }
 
             if (graphUpdated != null)
                 graphUpdated(graph);
@@ -41,9 +48,6 @@ namespace VSGraphViz
 
         void RebuildGraph()
         {
-            //TODO: FIX THIS!!!!!
-            if (root_expression == null)
-                return;
             graph = new Graph<Object>();
 
             usedVertices = new SortedDictionary<string, int>();
