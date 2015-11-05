@@ -41,6 +41,7 @@ namespace VSGraphViz
                 typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
             nextGraph = null;
+            hasNextGraph = false;
             VSGraphVizPackage.expressionGraph.graphUpdated += graphUpdatedHandler;
 
             bc = new BrushConverter();
@@ -58,22 +59,25 @@ namespace VSGraphViz
         }
         
         Graph<object> nextGraph;
+        bool hasNextGraph;
         private void graphUpdatedHandler(Graph<object> graph)
         {
             if (hold)
                 return;
 
             nextGraph = graph;
+            hasNextGraph = true;
             ShowNextGraph();
         }
         void ShowNextGraph()
         {
             if (animationCounter != 0 || !showCompleted)
                 return;
-            if (nextGraph == null)
+            if (!hasNextGraph)
                 return;
             Graph<object> gr = nextGraph;
             nextGraph = null;
+            hasNextGraph = false;
             show_graph(gr, 0);
         }
 
@@ -536,7 +540,11 @@ namespace VSGraphViz
         public void show_graph(Graph<Object> graph, int root = -1)
         {
             if (graph == null)
+            {
+                G = null;
+                front_canvas.Children.Clear();
                 return;
+            }
 
             showCompleted = false;
 
