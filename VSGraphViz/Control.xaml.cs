@@ -231,7 +231,7 @@ namespace VSGraphViz
                 {
                     Rectangle e = vert[i].Children[0] as Rectangle;
                     if (i != root)
-                        e.Fill = (Brush)bc.ConvertFrom("#EEEEF2");
+                        e.Fill = (Brush)bc.ConvertFrom("#DEDEDE");
                 }
             }
             
