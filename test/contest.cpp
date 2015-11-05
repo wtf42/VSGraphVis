@@ -100,6 +100,26 @@ struct node
 	node(int key = 0) :key(key) {}
 };
 
+node* get_next_graph(fstream &cin)
+{
+	int n, m; cin >> n >> m;
+
+	vector<node*> v(n);
+	for (int i = 0; i < n; i++)
+		v[i] = new node(i + 1);
+
+	node* r = v[0];
+	for (int i = 0; i < m; i++)
+	{
+		int a, b; cin >> a >> b;
+		a--, b--;
+		v[a]->adj.push_back(v[b]);
+		v[b]->adj.push_back(v[a]);
+	}
+
+	return r;
+}
+
 int main()
 {
 	//ios::sync_with_stdio(false);
@@ -121,28 +141,19 @@ int main()
 	//build_tree();
 
 	fstream cin("input.txt");
-	int n, m; cin >> n >> m;
+	
 
-	vector<node*> v(n);
-	for (int i = 0; i < n; i++)
-		v[i] = new node(i + 1);
-	for (int i = 0; i < m; i++)
-	{
-		int a, b; cin >> a >> b;
-		a--, b--;
-		v[a]->adj.push_back(v[b]);
-		v[b]->adj.push_back(v[a]);
-	}
+	node* r = get_next_graph(cin);
 
-	node*r = v[0];
-
-	node* a = new node(n + 1);
-	node* b = new node(n + 2);
+	node* a = new node(111);
+	node* b = new node(112);
 
 	r->adj.push_back(a);
 	r->adj.push_back(b);
 
-	r = v[0];
+	node* r2 = get_next_graph(cin);
+
+	node* r3 = get_next_graph(cin);
 
 	return 0;
 }
