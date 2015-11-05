@@ -334,8 +334,8 @@ namespace VSGraphViz
 
             List<Vector> config = new List<Vector>();
 
-            this.xy = grap_layout_algo[cur_alg - 1].system_config((int)front_canvas.ActualWidth,
-                                                        (int)front_canvas.ActualHeight,
+            this.xy = grap_layout_algo[cur_alg - 1].system_config(canvas_width(),
+                                                        canvas_height(),
                                                         G,
                                                         out config,
                                                         -1, -1,
@@ -457,8 +457,8 @@ namespace VSGraphViz
             List<Vector> tmp_config = new List<Vector>();
             for (int i = 0; i < graph.V; i++)
             {
-                int x = rnd.Next((int)front_canvas.Width-20), y = rnd.Next((int)front_canvas.Height-20);
-                tmp_config.Add(new Vector(x+5, y+5));
+                int x = rnd.Next(1, canvas_width()), y = rnd.Next(1, canvas_height());  ///!!!!!!!
+                tmp_config.Add(new Vector(x, y));
             }
 
             List<bool> used = new List<bool>(graph.V);
@@ -537,6 +537,16 @@ namespace VSGraphViz
                 }
             }
             //show = true;
+        }
+
+        private int canvas_width()
+        {
+            return (int)front_canvas.ActualWidth - 2 * VSGraphVizSettings.node_width;
+        }
+
+        private int canvas_height()
+        {
+            return (int)front_canvas.ActualHeight - 2 * VSGraphVizSettings.node_height;
         }
 
         List<GraphLayout> grap_layout_algo;
