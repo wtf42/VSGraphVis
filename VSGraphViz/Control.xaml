@@ -5,19 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vsfx="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.14.0"
              xmlns:local="clr-namespace:VSGraphViz"
-             mc:Ignorable="d" 
-             Height="520" Width="700"
+             Height="620" Width="700" MinHeight="620" MinWidth="700"
              Name="ToolWindow">
     <UserControl.Resources>
     </UserControl.Resources>
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
+        <Menu>
+            <MenuItem Header="Algorithm">
+                <MenuItem Header="Fruchterman-Reingold" Click="select_FR" IsChecked="True"></MenuItem>
+                <MenuItem Header="Radial" Click="select_Radial"></MenuItem>
+                <MenuItem Header="Right-Heavy HV" Click="select_HV"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Options">
+                <MenuItem Header="Freeze" Click="chb_true" ></MenuItem>
+                <MenuItem Header="Unfreeze" Click="chb_false" IsChecked="True"></MenuItem>
+            </MenuItem>
+        </Menu>
         <TextBox Name="tb1" Text="42" Margin="0,10,0,106" Visibility="Hidden"/>
-        <CheckBox Name="chb" Height="25" Width="50" Checked="chb_true" Unchecked="chb_false" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0">hold</CheckBox>
-        <ComboBox Name="cb" Height="25" Width="Auto" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left" SelectedIndex="0">
+        <!--<CheckBox Name="chb" Height="25" Width="50" Checked="chb_true" Unchecked="chb_false" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0">hold</CheckBox>-->
+        <!--<ComboBox Name="cb" Height="25" Width="Auto" SelectionChanged="changeAlg" VerticalAlignment="Top" HorizontalAlignment="Left" SelectedIndex="0">
             <ComboBoxItem Name="a">Fruchterman-Reingold</ComboBoxItem>
             <ComboBoxItem Name="b">Radial</ComboBoxItem>
             <ComboBoxItem Name="c">RightHeavy</ComboBoxItem>
-        </ComboBox>
-        <Canvas x:Name="front_canvas" Width="580" Height="420" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </ComboBox>-->
+        <Canvas x:Name="front_canvas" Width="600" Height="510" VerticalAlignment="Center" HorizontalAlignment="Center"/>
     </Grid>
 </UserControl>

@@ -17,6 +17,7 @@ namespace VSGraphViz
             base(null)
         {
             base.Content = VSGraphVizPackage.ToolWindowCtl;
+            base.Caption = "VS Graph Vis";
         }
     }
 }

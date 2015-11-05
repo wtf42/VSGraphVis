@@ -58,10 +58,63 @@ namespace VSGraphViz
         private void chb_true(object sender, RoutedEventArgs e)
         {
             hold = true;
+            /*unfreeze.IsChecked = false;
+            freeze.IsChecked = true;*/
+            menu_update(sender);
         }
         private void chb_false(object sender, RoutedEventArgs e)
         {
             hold = false;
+            /*unfreeze.IsChecked = true;
+            freeze.IsChecked = false;*/
+            menu_update(sender);
+        }
+
+        private void menu_update(object sender)
+        {
+            MenuItem obj = sender as MenuItem;
+            MenuItem p = obj.Parent as MenuItem;
+
+            foreach (var ch in p.Items)
+            {
+                MenuItem sub = ch as MenuItem;
+                sub.IsChecked = false;
+            }
+
+            obj.IsChecked = true;
+        }
+
+        private void select_FR(object sender, RoutedEventArgs e)
+        {
+            if (G == null)
+                return;
+
+            menu_update(sender);
+
+            cur_alg = 1;
+            show_graph(G, 0);
+        }
+
+        private void select_Radial(object sender, RoutedEventArgs e)
+        {
+            if (G == null)
+                return;
+
+            menu_update(sender);
+
+            cur_alg = 2;
+            show_graph(G, 0);
+        }
+
+        private void select_HV(object sender, RoutedEventArgs e)
+        {
+            if (G == null)
+                return;
+
+            menu_update(sender);
+
+            cur_alg = 3;
+            show_graph(G, 0);
         }
 
         private void changeAlg(object sender, SelectionChangedEventArgs args)
