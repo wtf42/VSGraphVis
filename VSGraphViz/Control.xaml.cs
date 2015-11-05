@@ -40,8 +40,8 @@ namespace VSGraphViz
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
-            updateQueue = new Queue<Graph<object>>();
-            VSGraphVizPackage.expressionGraph.graphUpdated += ExpressionGraph_graphUpdated;
+            nextGraph = null;
+            VSGraphVizPackage.expressionGraph.graphUpdated += graphUpdatedHandler;
 
             bc = new BrushConverter();
 
@@ -56,24 +56,25 @@ namespace VSGraphViz
             grap_layout_algo.Add(new RadialLayout());
             grap_layout_algo.Add(new RightHeavyHVLayout());
         }
-
-        Queue<Graph<object>> updateQueue;
-        private void ExpressionGraph_graphUpdated(Graph<object> graph)
+        
+        Graph<object> nextGraph;
+        private void graphUpdatedHandler(Graph<object> graph)
         {
             if (hold)
                 return;
 
-            updateQueue.Enqueue(graph);
+            nextGraph = graph;
             ShowNextGraph();
         }
         void ShowNextGraph()
         {
             if (animationCounter != 0 || !showCompleted)
                 return;
-            if (updateQueue.Count != 0)
-            {
-                show_graph(updateQueue.Dequeue());
-            }
+            if (nextGraph == null)
+                return;
+            Graph<object> gr = nextGraph;
+            nextGraph = null;
+            show_graph(gr, 0);
         }
 
         Microsoft.VisualStudio.Shell.SelectionContainer selectionContainer;
@@ -108,8 +109,9 @@ namespace VSGraphViz
 
         public void OnSizeHandler()
         {
-            VSGraphVizPackage.VSOutputLog("newW=" + this.ActualWidth);
-            VSGraphVizPackage.VSOutputLog("newH=" + this.ActualHeight);
+            graphUpdatedHandler(G);
+            //VSGraphVizPackage.VSOutputLog("newW=" + this.ActualWidth);
+            //VSGraphVizPackage.VSOutputLog("newH=" + this.ActualHeight);
         }
 
         private void chb_true(object sender, RoutedEventArgs e)
@@ -405,9 +407,13 @@ namespace VSGraphViz
                 {
                     AnimateVertex(v_id, (int)xy[step][v_id][0], (int)xy[step][v_id][1]);
                 }
-                Animation_CompletedHandler(s, e);
+                AnimationCompletedHandler(s, e);
             };
-            y_anim.Completed += Animation_CompletedHandler;
+            y_anim.Completed += AnimationCompletedHandler;
+            lock (animationLock)
+            {
+                animationCounter += 2;
+            }
 
             // incident edges animation
             for (int i = 0; edge.Count > 0 && i < edge[v_id].Count; i++)
@@ -419,10 +425,6 @@ namespace VSGraphViz
                                                  v_id < edge[v_id][i].Key);
             }
 
-            lock(animationLock)
-            {
-                animationCounter += 2;
-            }
             tt.BeginAnimation(TranslateTransform.XProperty, x_anim);
             tt.BeginAnimation(TranslateTransform.YProperty, y_anim);
         }
@@ -438,13 +440,6 @@ namespace VSGraphViz
 
                 da1 = new DoubleAnimation(e.X1, to_x, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
 
-                da.Completed += Animation_CompletedHandler;
-                da1.Completed += Animation_CompletedHandler;
-                lock(animationLock)
-                {
-                    animationCounter += 2;
-                }
-
                 Storyboard.SetTargetProperty(da, new PropertyPath("(Line.Y1)"));
                 Storyboard.SetTargetProperty(da1, new PropertyPath("(Line.X1)"));
             }
@@ -453,13 +448,6 @@ namespace VSGraphViz
                 da = new DoubleAnimation(e.Y2, to_y, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
 
                 da1 = new DoubleAnimation(e.X2, to_x, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
-
-                da.Completed += Animation_CompletedHandler;
-                da1.Completed += Animation_CompletedHandler;
-                lock (animationLock)
-                {
-                    animationCounter += 2;
-                }
 
                 Storyboard.SetTargetProperty(da, new PropertyPath("(Line.Y2)"));
                 Storyboard.SetTargetProperty(da1, new PropertyPath("(Line.X2)"));
@@ -471,7 +459,7 @@ namespace VSGraphViz
             e.BeginStoryboard(sb);
         }
 
-        private void Animation_CompletedHandler(object sender, EventArgs e)
+        private void AnimationCompletedHandler(object sender, EventArgs e)
         {
             lock (animationLock)
             {
@@ -547,6 +535,9 @@ namespace VSGraphViz
 
         public void show_graph(Graph<Object> graph, int root = -1)
         {
+            if (graph == null)
+                return;
+
             showCompleted = false;
 
             G = InitGraph(graph);
