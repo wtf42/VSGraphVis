@@ -192,6 +192,7 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
     <Compile Include="graphs\FruchtermanReingold.cs" />
     <Compile Include="graphs\Graph.cs" />
     <Compile Include="graphs\GraphAlgo.cs" />
+    <Compile Include="graphs\GraphLayot.cs" />
     <Compile Include="graphs\HV.cs" />
     <Compile Include="graphs\Layout.cs" />
     <Compile Include="graphs\Radial.cs" />

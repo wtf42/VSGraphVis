@@ -12,9 +12,9 @@
     <Grid x:Name="pan1" Grid.Row="1" Margin="12,0,12,0">
         <Menu Background="Transparent">
             <MenuItem Header="Algorithm">
-                <MenuItem Header="Fruchterman-Reingold" Click="select_FR" IsChecked="True"></MenuItem>
-                <MenuItem Header="Radial" Click="select_Radial"></MenuItem>
-                <MenuItem Header="Right-Heavy HV" Click="select_HV"></MenuItem>
+                <MenuItem Header="Fruchterman-Reingold" Click="selectAlgorithm" IsChecked="True"></MenuItem>
+                <MenuItem Header="Radial" Click="selectAlgorithm"></MenuItem>
+                <MenuItem Header="Right-Heavy HV" Click="selectAlgorithm"></MenuItem>
             </MenuItem>
             <MenuItem Header="Options">
                 <MenuItem Header="Freeze" Click="chb_true" ></MenuItem>

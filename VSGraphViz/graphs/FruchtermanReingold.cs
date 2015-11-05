@@ -13,6 +13,41 @@ namespace FruchtermanReingold
     using GraphAlgo;
     using SplayTree;
     using Vector;
+    using GraphLayout;
+
+    public class FRLayout : GraphLayout
+    {
+        public List<List<Vector>> system_config(int W, int H, Graph<Object> G,
+                                                int root = -1, int p_root = -1,
+                                                List<Vector> initial_config = null)
+        {
+            List<List<Vector>> X = new List<List<Vector>>();
+
+            FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
+                                      square_distance_repulsive_force.f,
+                                      W, H,
+                                      initial_config);
+
+            bool equilibria = false;
+            List<Vector> xy = new List<Vector>();
+            int iter = 0;
+
+            if (initial_config != null)
+                X.Add(initial_config);
+
+            while (!equilibria)
+            {
+                xy = fr_layout.system_config(out equilibria);
+                if (iter % 100 == 0 || equilibria)
+                {
+                    X.Add(xy);
+                }
+                iter++;
+            }
+
+            return X;
+        }
+    }
 
     public class linear_cooling
     {

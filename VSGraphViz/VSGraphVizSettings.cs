@@ -13,5 +13,7 @@ namespace VSGraphViz
         public const int node_font_size = 9;
         public const int node_width = 55;
         public const int node_height = 30;
+
+        public const int line_thickness = 1;
     }
 }

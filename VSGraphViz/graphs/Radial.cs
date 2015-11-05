@@ -10,8 +10,26 @@ namespace Radial
     using GraphAlgo;
     using Vector;
     using Layout;
+    using GraphLayout;
 
-    public class Radial
+    public class RadialLayout : GraphLayout
+    {
+        public List<List<Vector>> system_config(int W, int H,
+                                         Graph<Object> G,
+                                         int root = -1, int p_root = -1,
+                                         List<Vector> initial_config = null)
+        {
+            Radial r = new Radial(G, W, H);
+
+            List<List<Vector>> X = new List<List<Vector>>();
+
+            X.Add(r.system_config(root, p_root));
+
+            return X;
+        }
+    }
+
+    class Radial
     {
         public Radial(Graph<Object> G, int W, int H)
         {

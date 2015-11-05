@@ -20,6 +20,7 @@ namespace VSGraphViz
     using GraphAlgo;
     using FruchtermanReingold;
     using Radial;
+    using GraphLayout;
     using HV;
     using SplayTree;
     using Vector;
@@ -39,14 +40,16 @@ namespace VSGraphViz
                 typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
             bc = new BrushConverter();
-            // = 13;
-
-            //MainWindow.Background = (Brush)bc.ConvertFrom("#FFF1F1F1");
 
             show = false;
             animation_complete = true;
 
             cur_alg = 1;
+
+            grap_layout_algo = new List<GraphLayout>();
+            grap_layout_algo.Add(new FRLayout());
+            grap_layout_algo.Add(new RadialLayout());
+            grap_layout_algo.Add(new RightHeavyHVLayout());
         }
 
         Microsoft.VisualStudio.Shell.SelectionContainer selectionContainer;
@@ -82,25 +85,12 @@ namespace VSGraphViz
         private void chb_true(object sender, RoutedEventArgs e)
         {
             hold = true;
-
             menu_update(sender);
         }
         private void chb_false(object sender, RoutedEventArgs e)
         {
             hold = false;
-
             menu_update(sender);
-        }
-
-        private void changle_algo(object sender, int id)
-        {
-            if (G == null)
-                return;
-
-            menu_update(sender);
-
-            cur_alg = id;
-            show_graph(G, 0);
         }
 
         private void menu_update(object sender)
@@ -117,19 +107,28 @@ namespace VSGraphViz
             obj.IsChecked = true;
         }
 
-        private void select_FR(object sender, RoutedEventArgs e)
+        private void selectAlgorithm(object sender, RoutedEventArgs e)
         {
-            changle_algo(sender, 1);
-        }
+            MenuItem obj = sender as MenuItem;
+            MenuItem p = obj.Parent as MenuItem;
 
-        private void select_Radial(object sender, RoutedEventArgs e)
-        {
-            changle_algo(sender, 2);
-        }
+            int i = 0;
+            int id = 0;
+            foreach (var ch in p.Items)
+            {
+                MenuItem sub = ch as MenuItem;
+                if (sub.Equals(obj)) id = i;
+                i++;
+            }
+            id++;
 
-        private void select_HV(object sender, RoutedEventArgs e)
-        {
-            changle_algo(sender, 3);
+            if (G == null)
+                return;
+
+            menu_update(sender);
+
+            cur_alg = id;
+            show_graph(G, 0);
         }
 
         private void AddEdge(int v, int u)
@@ -138,7 +137,7 @@ namespace VSGraphViz
                 edge.Add(new List<KeyValuePair<int, Line>>());
 
             Line ln = new Line();
-            ln.StrokeThickness = 2;
+            ln.StrokeThickness = VSGraphVizSettings.line_thickness;
             ln.Stroke = (Brush)bc.ConvertFrom("#FF636363");
 
             edge[v].Add(new KeyValuePair<int, Line>(u, ln));
@@ -154,7 +153,7 @@ namespace VSGraphViz
 
             Rectangle ve = new Rectangle();
             ve.Stroke = (Brush)bc.ConvertFrom("#FF636363");
-            ve.StrokeThickness = 2;
+            ve.StrokeThickness = VSGraphVizSettings.line_thickness;
             ve.Fill = (Brush)bc.ConvertFrom("#FFB7B7B7");
 
             vert[v].Cursor = Cursors.Hand;
@@ -183,8 +182,14 @@ namespace VSGraphViz
             vert[v].MouseRightButtonUp += Control_MouseRightButtonUp;
             vert[v].Tag = G.vertices[v].data;
 
-            vert[v].MouseEnter += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 3; };
-            vert[v].MouseLeave += (o, e) => { Rectangle r = vert[v].Children[0] as Rectangle; r.StrokeThickness = 2; };
+            vert[v].MouseEnter += (o, e) => {
+                Rectangle r = vert[v].Children[0] as Rectangle;
+                r.StrokeThickness = VSGraphVizSettings.line_thickness + 1;
+            };
+            vert[v].MouseLeave += (o, e) => {
+                Rectangle r = vert[v].Children[0] as Rectangle;
+                r.StrokeThickness = VSGraphVizSettings.line_thickness;
+            };
 
             vert[v].MouseLeftButtonDown += VertexMouseDown;
             vert[v].MouseLeftButtonUp += VertexMouseUp;
@@ -230,8 +235,12 @@ namespace VSGraphViz
                 foreach (var i in new_vertices)
                 {
                     Rectangle e = vert[i].Children[0] as Rectangle;
+                    TextBlock t = vert[i].Children[1] as TextBlock;
                     if (i != root)
-                        e.Fill = (Brush)bc.ConvertFrom("#DEDEDE");
+                    {
+                        e.Fill = (Brush)bc.ConvertFrom("#3CB371");
+                        t.Foreground = (Brush)bc.ConvertFrom("#FFFFFF");
+                    }
                 }
             }
             
@@ -302,66 +311,25 @@ namespace VSGraphViz
             }
         }
 
-        // Fruchterman Reingold Algorithm
+        // 
         private void ComputeXY(Graph<Object> G, int cur_alg)
         {
             AcyclicTest<Object> AT = new AcyclicTest<Object>(G);
             bool acyclic = AT.isAcyclic();
 
-            switch (cur_alg)
+            if (cur_alg >= 2 && !acyclic)
             {
-                case 1:
-                    FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
-                                      square_distance_repulsive_force.f,
-                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight, 
-                                      initial_config);
-
-                    bool equilibria = false;
-                    List<Vector> xy = new List<Vector>();
-                    int iter = 0;
-
-                    if (initial_config != null)
-                        this.xy.Add(initial_config);
-
-                    while (!equilibria)
-                    {
-                        xy = fr_layout.system_config(out equilibria);
-                        if (iter % 100 == 0 || equilibria)
-                        {
-                            this.xy.Add(xy);
-                        }
-                        iter++;
-                    }
-                    break;
-                case 2:
-                    if (!acyclic)
-                    {
-                        cur_alg = 1;
-                        ComputeXY(G, 1);
-                        return;
-                    }
-                    else
-                    {
-                        Radial r2 = new Radial(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                        List<Vector> xy2 = r2.system_config();
-                        this.xy.Add(xy2);
-                    }
-                    break;
-                case 3:
-                    if (!acyclic)
-                    {
-                        cur_alg = 1;
-                        ComputeXY(G, 1);
-                        return;
-                    }
-                    else
-                    {
-                        RightHeavyHV r3 = new RightHeavyHV(G, (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight);
-                        List<Vector> xy3 = r3.system_config();
-                        this.xy.Add(xy3);
-                    }
-                    break;
+                // tree algorithm was chosen for inappropriate graph
+                cur_alg = 1;
+                ComputeXY(G, cur_alg);
+                return;
             }
+
+            this.xy = grap_layout_algo[cur_alg-1].system_config((int)front_canvas.ActualWidth, 
+                                                        (int)front_canvas.ActualHeight,
+                                                        G, -1, -1,
+                                                        initial_config);
+
 
             if (xy.Count > 0)
             {
@@ -558,6 +526,7 @@ namespace VSGraphViz
             //show = true;
         }
 
+        List<GraphLayout> grap_layout_algo;
 
         Graph<Object> G;
 

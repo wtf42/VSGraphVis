@@ -10,38 +10,31 @@ namespace HV
     using Graph;
     using GraphAlgo;
     using Layout;
+    using GraphLayout;
 
-    public class RightHeavyHV
+    public class RightHeavyHVLayout : GraphLayout
     {
-        public RightHeavyHV(Graph<Object> G, int W, int H)
+        public List<List<Vector>> system_config(int W, int H,
+                                         Graph<Object> G,
+                                         int root = -1, int p_root = -1,
+                                         List<Vector> initial_config = null)
         {
-            this.G = G;
-            this.W = W;
-            this.H = H;
+            Layout layout = new Layout(W, H);
 
-            layout = new Layout(W, H);
-        }
-
-        public List<Vector> system_config(int root = -1, int p_root = -1)
-        {
             HV hv = new HV();
             List<Vector> X = hv.system_config(G, root, p_root);
+
+            Vector lt = new Vector(0,0), rb = new Vector(0,0);
             Layout.getRect(ref X, ref lt, ref rb);
 
             for (int i = 0; i < X.Count; i++)
                 X[i] = layout.getCoord(X[i], lt, rb);
 
-            return X;
+            List<List<Vector>> _X = new List<List<Vector>>();
+            _X.Add(X);
+            return _X;
         }
-
-        Layout layout;
-
-        Graph<Object> G;
-        int W, H;
-
-        Vector lt, rb; 
     }
-
     
     class HV
     {
