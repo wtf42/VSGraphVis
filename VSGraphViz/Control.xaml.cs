@@ -209,19 +209,7 @@ namespace VSGraphViz
         private void InitVis(Graph<Object> G, Canvas front_canvas, int root = -1)
         {
             front_canvas.Children.Clear();
-
-            //front_canvas.Background = Brushes.Yellow;
-            //ToolWindowControl.Background = Brushes.Green;
-
-            var r = new Rectangle();
-            r.Width = front_canvas.ActualWidth;
-            r.Height = front_canvas.ActualHeight;
-            r.Fill = Brushes.Yellow;
-            //r.RadiusX = ToolWindowControl.ActualWidth / 2;
-            //r.RadiusY = ToolWindowControl.ActualHeight / 2;
-            //r.RenderSize = new Size(r.Width, r.Height);
-            front_canvas.Children.Add(r);
-
+            
             edge = new List<List<KeyValuePair<int, Line>>>();
 
             vert = new List<Grid>(G.V);
@@ -327,32 +315,12 @@ namespace VSGraphViz
             AcyclicTest<Object> AT = new AcyclicTest<Object>(G);
             bool acyclic = AT.isAcyclic();
 
-            VSGraphVizPackage.VSOutputLog(front_canvas.ActualHeight.ToString());
-            VSGraphVizPackage.VSOutputLog(front_canvas.ActualWidth.ToString());
-            VSGraphVizPackage.VSOutputLog(this.ActualHeight.ToString());
-            VSGraphVizPackage.VSOutputLog(this.ActualWidth.ToString());
-
-            /*var line = new Line();
-            line.Stroke = Brushes.LightSteelBlue;
-
-            line.X1 = 0;
-            line.X2 = 0;
-            line.Y1 = front_canvas.ActualHeight;
-            line.Y2 = front_canvas.ActualWidth;
-
-            line.StrokeThickness = 20;
-            front_canvas.Children.Add(line);*/
-
             switch (cur_alg)
             {
                 case 1:
                     FR_grid fr_layout = new FR_grid(G, square_distance_attractive_force.f,
                                       square_distance_repulsive_force.f,
-                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight,
-                                      //(int)ToolWindowControl.Width, (int)ToolWindowControl.Height,
-                                      //(int)this.ActualHeight, (int)this.ActualHeight,
-                                      //parent.windowFrameEventsHandler.Width,
-                                      //parent.windowFrameEventsHandler.Height,
+                                      (int)front_canvas.ActualWidth, (int)front_canvas.ActualHeight, 
                                       initial_config);
 
                     bool equilibria = false;
