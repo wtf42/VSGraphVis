@@ -8,43 +8,47 @@ using Graph;
 
 namespace VSGraphViz
 {
-    public class VSGraphVisualizer
+    public delegate void GraphUpdateEventHandler(Graph<Object> graph);
+
+    public class ExpressionGraph
     {
-        public Expression root_expression;
+        Expression root_expression;
         Graph<Object> graph;
 
-        public VSGraphVisualizer()
+        public event GraphUpdateEventHandler graphUpdated;
+
+        public ExpressionGraph()
         {
             root_expression = null;
             graph = null;
         }
 
-        public void UpdateGraph(EnvDTE.Expression exp)
+        public void SetExpression(EnvDTE.Expression exp)
         {
+            root_expression = exp;
 
-            if (VSGraphVizPackage.ToolWindowCtl.hold)
-                return;
-
-            if (!VSGraphVizPackage.ToolWindowCtl.animation_complete)
-                return;
-
-            VSGraphVizPackage.ToolWindowCtl.animation_complete = false;
-
-            BuildGraph(exp);
+            RebuildGraph();
             MakeVertexCaptions();
             MakeVertexTooltips();
-            UpdateGraphLayout();
+
+            if (graphUpdated != null)
+                graphUpdated(graph);
+        }
+        public Expression GetExpression
+        {
+            get { return root_expression; }
         }
 
-        void BuildGraph(Expression root_exp)
+        void RebuildGraph()
         {
-            root_expression = root_exp;
-
+            //TODO: FIX THIS!!!!!
+            if (root_expression == null)
+                return;
             graph = new Graph<Object>();
 
             usedVertices = new SortedDictionary<string, int>();
-            int root = graph.add(new ExpressionVertex(root_exp));
-            BuildGraphRec(root_exp, root, 0);
+            int root = graph.add(new ExpressionVertex(root_expression));
+            BuildGraphRec(root_expression, root, 0);
         }
 
         SortedDictionary<string, int> usedVertices;
@@ -52,6 +56,8 @@ namespace VSGraphViz
         {
             usedVertices.Add(exp.Value, v);
             if (rec_level == VSGraphVizSettings.max_rec_depth)
+                return;
+            if (graph.V > VSGraphVizSettings.max_verticies)
                 return;
             foreach (Expression m in exp.DataMembers)
             {
@@ -149,11 +155,6 @@ namespace VSGraphViz
                 }
                 vert.tooltip = tooltip;
             }
-        }
-
-        public void UpdateGraphLayout()
-        {
-            VSGraphVizPackage.ToolWindowCtl.show_graph(graph, 0);
         }
     }
     public class ExpressionVertex

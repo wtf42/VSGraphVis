@@ -15,27 +15,33 @@ namespace VSGraphViz
     [Guid(GuidList.guidToolWindowPersistenceString)]
     public class ToolWindow : ToolWindowPane
     {
+        public Control control;
         public ToolWindow() :  
             base(null)
         {
-            base.Content = VSGraphVizPackage.ToolWindowCtl;
             base.Caption = "VS Graph Vis";
+
+            control = new Control();
+            base.Content = control;
         }
         public WindowStatus windowFrameEventsHandler;
         public override void OnToolWindowCreated()
         {
             base.OnToolWindowCreated();
 
-            VSGraphVizPackage.ToolWindowCtl.TrackSelection = (ITrackSelection)GetService(typeof(STrackSelection));
-            windowFrameEventsHandler = new WindowStatus();
+            control.TrackSelection = (ITrackSelection)GetService(typeof(STrackSelection));
+            windowFrameEventsHandler = new WindowStatus(this);
             (this.Frame as IVsWindowFrame).SetProperty(
                 (int)__VSFPROPID.VSFPROPID_ViewHelper, windowFrameEventsHandler);
         }
     }
     public sealed class WindowStatus : IVsWindowFrameNotify3
     {
-        public WindowStatus()
-        { }
+        ToolWindow window;
+        public WindowStatus(ToolWindow window)
+        {
+            this.window = window;
+        }
         public int OnClose(ref uint pgrfSaveOptions)
         {
             return VSConstants.S_OK;
@@ -55,7 +61,7 @@ namespace VSGraphViz
         public int OnSize(int x, int y, int w, int h)
         {
             //VSGraphVizPackage.VSOutputLog(w.ToString() +":"+ h.ToString());
-            VSGraphVizPackage.ToolWindowCtl.OnSizeHandler();
+            window.control.OnSizeHandler();
             return VSConstants.S_OK;
         }
     }

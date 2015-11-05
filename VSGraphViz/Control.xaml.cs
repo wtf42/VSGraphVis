@@ -39,15 +39,35 @@ namespace VSGraphViz
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
 
+            updateQueue = new Queue<Graph<object>>();
+            VSGraphVizPackage.expressionGraph.graphUpdated += ExpressionGraph_graphUpdated;
+
             bc = new BrushConverter();
-            // = 13;
 
-            //MainWindow.Background = (Brush)bc.ConvertFrom("#FFF1F1F1");
-
-            show = false;
-            animation_complete = true;
+            showCompleted = true;
+            animationCounter = 0;
+            animationLock = new object();
 
             cur_alg = 1;
+        }
+
+        Queue<Graph<object>> updateQueue;
+        private void ExpressionGraph_graphUpdated(Graph<object> graph)
+        {
+            if (hold)
+                return;
+
+            updateQueue.Enqueue(graph);
+            ShowNextGraph();
+        }
+        void ShowNextGraph()
+        {
+            if (animationCounter != 0 || !showCompleted)
+                return;
+            if (updateQueue.Count != 0)
+            {
+                show_graph(updateQueue.Dequeue());
+            }
         }
 
         Microsoft.VisualStudio.Shell.SelectionContainer selectionContainer;
@@ -274,7 +294,7 @@ namespace VSGraphViz
         private void VertexMouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && moving_obj != null
-                && animation_complete)
+                && animationCounter == 0)
             {
                 Grid tmp = moving_obj as Grid;
 
@@ -408,11 +428,9 @@ namespace VSGraphViz
                 {
                     AnimateVertex(v_id, (int)xy[step][v_id][0], (int)xy[step][v_id][1]);
                 }
-                else
-                {
-                    animation_complete = true;
-                }
+                Animation_CompletedHandler(s, e);
             };
+            y_anim.Completed += Animation_CompletedHandler;
 
             // incident edges animation
             for (int i = 0; edge.Count > 0 && i < edge[v_id].Count; i++)
@@ -424,6 +442,10 @@ namespace VSGraphViz
                                                  v_id < edge[v_id][i].Key);
             }
 
+            lock(animationLock)
+            {
+                animationCounter += 2;
+            }
             tt.BeginAnimation(TranslateTransform.XProperty, x_anim);
             tt.BeginAnimation(TranslateTransform.YProperty, y_anim);
         }
@@ -439,6 +461,13 @@ namespace VSGraphViz
 
                 da1 = new DoubleAnimation(e.X1, to_x, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
 
+                da.Completed += Animation_CompletedHandler;
+                da1.Completed += Animation_CompletedHandler;
+                lock(animationLock)
+                {
+                    animationCounter += 2;
+                }
+
                 Storyboard.SetTargetProperty(da, new PropertyPath("(Line.Y1)"));
                 Storyboard.SetTargetProperty(da1, new PropertyPath("(Line.X1)"));
             }
@@ -447,6 +476,13 @@ namespace VSGraphViz
                 da = new DoubleAnimation(e.Y2, to_y, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
 
                 da1 = new DoubleAnimation(e.X2, to_x, new Duration(new TimeSpan(0, 0, 0, 0, (int)duration)));
+
+                da.Completed += Animation_CompletedHandler;
+                da1.Completed += Animation_CompletedHandler;
+                lock (animationLock)
+                {
+                    animationCounter += 2;
+                }
 
                 Storyboard.SetTargetProperty(da, new PropertyPath("(Line.Y2)"));
                 Storyboard.SetTargetProperty(da1, new PropertyPath("(Line.X2)"));
@@ -458,7 +494,14 @@ namespace VSGraphViz
             e.BeginStoryboard(sb);
         }
 
-
+        private void Animation_CompletedHandler(object sender, EventArgs e)
+        {
+            lock (animationLock)
+            {
+                --animationCounter;
+            }
+            ShowNextGraph();
+        }
 
         private Graph<Object> InitGraph(Graph<Object> graph = null)
         {
@@ -527,42 +570,41 @@ namespace VSGraphViz
 
         public void show_graph(Graph<Object> graph, int root = -1)
         {
-            if (!show)
+            showCompleted = false;
+            G = InitGraph(graph);
+
+            xy = new List<List<Vector>>();
+            ComputeXY(G, cur_alg);
+            InitVis(G, front_canvas, root);
+
+            current = new int[G.V];
+
+            for (int v = 0; v < G.V; v++)
             {
-                G = InitGraph(graph);
+                if (edge.Count == 0) break;
 
-                xy = new List<List<Vector>>();
-                ComputeXY(G, cur_alg);
-                InitVis(G, front_canvas, root);
-
-                current = new int[G.V];
-
-                for (int v = 0; v < G.V; v++)
+                for (int j = 0, to; edge.Count > 0 && xy.Count > 0 && j < edge[v].Count; j++)
                 {
-                    if (edge.Count == 0) break;
+                    to = edge[v][j].Key;
+                    if (v > to) continue;
 
-                    for (int j = 0, to; edge.Count > 0 && xy.Count > 0 && j < edge[v].Count; j++)
-                    {
-                        to = edge[v][j].Key;
-                        if (v > to) continue;
-
-                        edge[v][j].Value.X1 = xy[0][v][0] + vert_x;
-                        edge[v][j].Value.Y1 = xy[0][v][1] + vert_y;
-                        edge[v][j].Value.X2 = xy[0][to][0] + vert_x;
-                        edge[v][j].Value.Y2 = xy[0][to][1] + vert_y;
-                    }
-                }
-
-
-                for (int i = 0; xy.Count > 0 && i < G.V; i++)
-                {
-                    Canvas.SetLeft(vert[i], 0);
-                    Canvas.SetTop(vert[i], 0);
-
-                    AnimateVertex(i, (int)xy[0][i][0], (int)xy[0][i][1]);
+                    edge[v][j].Value.X1 = xy[0][v][0] + vert_x;
+                    edge[v][j].Value.Y1 = xy[0][v][1] + vert_y;
+                    edge[v][j].Value.X2 = xy[0][to][0] + vert_x;
+                    edge[v][j].Value.Y2 = xy[0][to][1] + vert_y;
                 }
             }
-            //show = true;
+
+
+            for (int i = 0; xy.Count > 0 && i < G.V; i++)
+            {
+                Canvas.SetLeft(vert[i], 0);
+                Canvas.SetTop(vert[i], 0);
+
+                AnimateVertex(i, (int)xy[0][i][0], (int)xy[0][i][1]);
+            }
+            showCompleted = true;
+            ShowNextGraph();
         }
 
 
@@ -572,7 +614,6 @@ namespace VSGraphViz
 
         int vert_x;
         int vert_y;
-        bool show;
         private List<List<KeyValuePair<int, Line>>> edge;
         private List<Grid> vert;
         private List<List<Vector>> xy;
@@ -584,8 +625,10 @@ namespace VSGraphViz
 
         private int cur_alg;
 
-        public bool animation_complete;
-        public bool hold;
+        bool showCompleted;
+        int animationCounter;
+        object animationLock;
+        bool hold;
         double X, Y;
         double X_shape, Y_shape;
         object moving_obj;

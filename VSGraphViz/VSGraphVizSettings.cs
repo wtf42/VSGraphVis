@@ -8,7 +8,8 @@ namespace VSGraphViz
 {
     public class VSGraphVizSettings
     {
-        public const int max_rec_depth = 10;
+        public const int max_rec_depth = 15;
+        public const int max_verticies = 200;
 
         public const int node_font_size = 9;
         public const int node_width = 55;
