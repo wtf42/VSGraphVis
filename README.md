@@ -36,6 +36,8 @@ VS 2015.
 
 https://youtu.be/98jeQkOJrv0
 
+![image](screenshot.jpg)
+
 ##Установка
 
 Скачиваем файл VSGraphViz.vsix:
