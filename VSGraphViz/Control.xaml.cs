@@ -37,9 +37,6 @@ namespace VSGraphViz
 
             selectionContainer = new Microsoft.VisualStudio.Shell.SelectionContainer();
 
-            ToolTipService.ShowDurationProperty.OverrideMetadata(
-                typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
-
             nextGraph = null;
             hasNextGraph = false;
             VSGraphVizPackage.expressionGraph.graphUpdated += graphUpdatedHandler;
@@ -214,6 +211,7 @@ namespace VSGraphViz
             tt.Content = vert_info[v];
             tt.StaysOpen = true;
             vert[v].ToolTip = tt;
+            ToolTipService.SetShowDuration(vert[v], Int32.MaxValue);
 
             vert[v].MouseRightButtonUp += Control_MouseRightButtonUp;
             vert[v].Tag = G.vertices[v].data;
