@@ -12,10 +12,10 @@
              Name="ToolWindowControl">
     <Grid>
         <Menu Background="Transparent" Height="20" VerticalAlignment="Top">
-            <MenuItem Header="Algorithm">
-                <MenuItem Header="Fruchterman-Reingold" Click="selectAlgorithm" IsChecked="True"></MenuItem>
+            <MenuItem Header="Algorithm" Name="algo_menu">
+                <!--<MenuItem Header="Fruchterman-Reingold" Click="selectAlgorithm" IsChecked="True"></MenuItem>
                 <MenuItem Header="Radial" Click="selectAlgorithm"></MenuItem>
-                <MenuItem Header="Right-Heavy HV" Click="selectAlgorithm"></MenuItem>
+                <MenuItem Header="Right-Heavy HV" Click="selectAlgorithm"></MenuItem>-->
             </MenuItem>
             <MenuItem Header="Options">
                 <MenuItem Header="Freeze" Click="chb_true" ></MenuItem>

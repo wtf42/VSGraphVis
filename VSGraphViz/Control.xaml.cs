@@ -53,8 +53,33 @@ namespace VSGraphViz
             grap_layout_algo.Add(new FRLayout());
             grap_layout_algo.Add(new RadialLayout());
             grap_layout_algo.Add(new RightHeavyHVLayout());
+
+            graph_layout_algo_name = new List<string>();
+            graph_layout_algo_name.Add("Fruchterman-Reingold");
+            graph_layout_algo_name.Add("Radial");
+            graph_layout_algo_name.Add("Right-Heavy HV");
+
+            gen_menu();
         }
         
+        void gen_menu()
+        {
+            foreach(var name in graph_layout_algo_name)
+            {
+                MenuItem it = new MenuItem();
+                it.Header = name;
+                it.Click += selectAlgorithm;
+
+                algo_menu.Items.Add(it);
+            }
+
+            if (algo_menu.Items.Count > 0)
+            {
+                MenuItem it = algo_menu.Items[0] as MenuItem;
+                it.IsChecked = true;
+            }
+        }
+
         Graph<object> nextGraph;
         bool hasNextGraph;
         private void graphUpdatedHandler(Graph<object> graph)
@@ -594,6 +619,7 @@ namespace VSGraphViz
         }
 
         List<GraphLayout> grap_layout_algo;
+        List<String> graph_layout_algo_name;
 
         Graph<Object> G;
 
